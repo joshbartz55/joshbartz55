@@ -1,6 +1,7 @@
 {
   "name": "chewie",
   "version": "0.0.0",
+  "homepage": "https://joshbartz55.github.io/joshbartz55/",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
