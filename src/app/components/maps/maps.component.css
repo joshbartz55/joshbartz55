@@ -1,0 +1,17 @@
+.buttongroups-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 3px solid green;
+}
+
+.buttongroups-container:first-child {
+  margin-top: 120px;
+  margin-bottom: 40px;
+}
+
+.multiple-selection-styling-mode {
+  border-left-width: 1px;
+  border-left-style: solid;
+  border-color: #ddd;
+}

@@ -1,0 +1,45 @@
+.flex-container {
+    display: flex;
+    justify-content: center;
+    width:100%;
+    height:100%;
+}
+
+.flex-child1 {
+    flex: 1 1 auto;
+    border: 2px solid yellow;
+    overflow:auto;
+    height: 100%;
+}
+.flex-child2 {
+    flex: 1 1 auto;
+    border: 2px solid yellow;
+    overflow:auto;
+    height: 100%;
+}    
+
+.title {
+    text-align: center;
+}
+
+.test {
+    flex: 1 1 auto;
+    border: 2px solid yellow;
+    width:33%;
+    overflow:auto;
+    height: 500px;
+
+}
+
+.gene-title {
+    flex: 1 1 auto;
+    text-align: left;
+}
+.gene-info {
+    flex: 1 1 auto;
+    text-align: right;
+}
+
+.scaled {
+    height: 350px;
+}

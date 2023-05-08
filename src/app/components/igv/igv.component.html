@@ -1,0 +1,41 @@
+
+<div #igvdiv class="igv"></div>
+
+<div class="flex-container">
+   <button color="accent" class="button" (click)="getInRangeGenes()">Gene Info</button>
+   <button color="accent" class="button" (click)="applyFilter()" *ngIf="this.genes.length > 0">Apply</button>
+   <dx-tag-box
+      *ngIf="this.genes.length > 0"
+      class="flex-child"
+      [items]="tissue_types"
+      [width]="100"
+      [searchEnabled]="true"
+      [hideSelectedItems]="true"
+      placeholder="Select Tissue(s)"
+      (onValueChanged)="onTissuesChanged($event)"
+      [showClearButton]="true"
+      [showSelectionControls]="true"
+      [multiline]="false"
+      [maxDisplayedTags]="5"
+      [value] = 'tissue_types'
+   ></dx-tag-box>
+   <dx-tag-box
+      *ngIf="this.genes.length > 0"
+      class="flex-child"
+      [items]="cell_types"
+      [width]="100"
+      [searchEnabled]="true"
+      [hideSelectedItems]="true"
+      placeholder="Select Cell Type(s)"
+      (onValueChanged)="onCellChanged($event)"
+      [showClearButton]="true"
+      [showSelectionControls]="true"
+      [multiline]="false"
+      [maxDisplayedTags]="5"
+      [value] = 'cell_types'
+      paginate = 'true'
+   ></dx-tag-box>
+</div>
+<div *ngFor="let gene of this.genes">
+   <app-gene-card [gene]="gene" [indices]="selected_indices" [en_id]="getEN_ID(gene.gene)"></app-gene-card>
+</div>

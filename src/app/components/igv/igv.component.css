@@ -1,0 +1,35 @@
+.igv{
+    width: 100%;
+    padding-top: 10px;
+}
+
+.flex-container {
+    display: flex;
+    margin-top: 10px;
+    margin-bottom: 4px;
+}
+
+.flex-child {
+    flex: 1;
+    border: 2px solid red;
+} 
+
+.button{
+    min-height: 35px;
+    background-color: #D8C385;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    border-radius: 3px;
+    box-shadow: 0 3px #999;
+    margin: 2px;
+}
+
+.button:active {
+    background-color: #CEB464;
+    transform: translateY(4px);
+  }
+
+  .button:hover{
+    background-color: #CEB464;
+  }

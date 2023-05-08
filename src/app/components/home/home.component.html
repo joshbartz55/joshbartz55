@@ -1,0 +1,72 @@
+<!-- <img src="{{logo.url}}" class="image" width="100%"> -->
+
+<!-- <dx-vector-map
+  id="map-container"
+  [bounds]="[-180, 85, 180, -75]"
+>
+</dx-vector-map> -->
+<div class="flex-container">
+  <div id="tissue_chart" *ngIf="charts_ready" class="pie-chart1">
+    <apx-chart
+      [series]="tissue_chart_options.series!"
+      [chart]="tissue_chart_options.chart!"
+      [labels]="tissue_chart_options.labels!"
+      [legend]="tissue_chart_options.legend!"
+      [responsive]="tissue_chart_options.responsive!"
+      [dataLabels]="tissue_chart_options.data_labels!"
+      [plotOptions]="tissue_chart_options.options!"
+      [theme]="tissue_chart_options.theme!"
+      [stroke]="tissue_chart_options.stroke!"
+    ></apx-chart>
+  </div>
+  <div class="cell-total">
+    <p>
+      <a class="title">Total Cells</a>
+      <br>  
+      <a class="value">{{cell_total.toLocaleString()}}</a>
+    </p>
+  </div>
+
+  <div id="sex_chart" *ngIf="charts_ready" class="pie-chart2">
+    <apx-chart
+      [series]="sex_chart_options.series!"
+      [chart]="sex_chart_options.chart!"
+      [labels]="sex_chart_options.labels!"
+      [legend]="sex_chart_options.legend!"
+      [responsive]="sex_chart_options.responsive!"
+      [dataLabels]="sex_chart_options.data_labels!"
+      [plotOptions]="sex_chart_options.options!"
+      [theme]="sex_chart_options.theme!"
+      [stroke]="sex_chart_options.stroke!"
+    ></apx-chart>
+  </div>
+</div>
+
+<div class="flex-container">
+  <div *ngFor="let image of logo_list">
+    <button class="container2" (click)="test(image.name)" id = {{image.name}}>
+      <img [src]="image.url" alt="Image not found" class = "silloette">
+      <div class="overlay">
+        <div class="overlay-age">{{prettify(image.name)}}</div>
+      </div>
+    </button>
+  </div>
+</div>
+
+<dx-tab-panel
+  #tabPanel
+  [dataSource]="options"
+  [selectedIndex]="0"
+  [loop]="false"
+  [animationEnabled]="true"
+  [swipeEnabled]="true"
+>
+  <div *dxTemplate="let options of 'title'" class="footer-widget">
+    <span class="footer-title">{{ options.title }}</span>
+  </div>
+  <div *dxTemplate="let options of 'item'">
+    <div class="tabpanel-item">
+      <a>{{options.text}}</a>
+    </div>
+  </div>
+</dx-tab-panel>
