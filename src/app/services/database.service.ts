@@ -9,15 +9,20 @@ import { DiffExp } from '../models/diffExp.model';
 import { Indices } from '../models/indices.model';
 import { Image } from '../models/image.model';
 
+//Dev Base URL
+//const baseUrl = 'http://localhost:8080/api/';
 
-const baseUrl = 'http://localhost:8080/api/displaySample';
-const metaUrl = 'http://localhost:8080/api/metadata';
-const sampleUrl = 'http://localhost:8080/api/sample';
-const positionsUrl = 'http://localhost:8080/api/positions';
-const diffExpUrl = 'http://localhost:8080/api/differentialExpression';
-const indicesUrl = 'http://localhost:8080/api/indices';
-const imagesUrl = 'http://localhost:8080/api/images';
-const linRegUrl = 'http://localhost:8080/api/linearRegression';
+//Prod Base URL
+const baseUrl = 'http://128.101.51.116:3304/api/';
+
+//query paths
+const metaUrl = baseUrl.concat('metadata'.toString());
+const sampleUrl = baseUrl.concat('sample'.toString());
+const positionsUrl = baseUrl.concat('positions'.toString());
+const diffExpUrl = baseUrl.concat('differentialExpression'.toString());
+const indicesUrl = baseUrl.concat('indices'.toString());
+const imagesUrl = baseUrl.concat('images'.toString());
+const linRegUrl = baseUrl.concat('linearRegression'.toString());
 
 
 @Injectable({
@@ -27,13 +32,13 @@ export class DatabaseService {
 
   constructor(private http: HttpClient) { }
 
-  getAll(): Observable<User[]> {
-    return this.http.get<User[]>(baseUrl);
-  }
+  // getAll(): Observable<User[]> {
+  //   return this.http.get<User[]>(baseUrl);
+  // }
 
-  get(id: any): Observable<User> {
-    return this.http.get(`${baseUrl}/${id}`);
-  }
+  // get(id: any): Observable<User> {
+  //   return this.http.get(`${baseUrl}/${id}`);
+  // }
 
   getAllDisplaySamples(): Observable<Sample[]> {
     return this.http.get<Sample[]>(sampleUrl);
