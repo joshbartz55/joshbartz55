@@ -296,7 +296,6 @@ export class GeneCardComponent implements OnInit {
     this.model_chart_options.series =[{data: conf_levels}]
     this.model_chart_options.title = {text: this.gene.gene,align: "center"}
     //set pval chart options
-    console.log(p_vals)
     this.pval_chart_options.series = [{name:'test', data: p_vals}]
     this.pval_chart_options.yaxis = {
       show: false,

@@ -13,7 +13,7 @@ import { Image } from '../models/image.model';
 //const baseUrl = 'http://localhost:8080/api/';
 
 //Prod Base URL
-const baseUrl = 'http://128.101.51.116:3304/api/';
+const baseUrl = 'https://128.101.51.116:443/api/';
 
 //query paths
 const metaUrl = baseUrl.concat('metadata'.toString());
@@ -73,6 +73,7 @@ export class DatabaseService {
   }
 
   getLinRegGraph(pmid:number, run_id:number, cluster_id:string, cell_type:string, gene: string): Observable<any> {
+    console.log(`${linRegUrl}/${pmid}/${run_id}/${cluster_id}/${cell_type}/${gene}`)
     return this.http.get<Image[]>(`${linRegUrl}/${pmid}/${run_id}/${cluster_id}/${cell_type}/${gene}`);
   }
 }
