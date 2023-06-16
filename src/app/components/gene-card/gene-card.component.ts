@@ -235,8 +235,6 @@ export class GeneCardComponent implements OnInit {
       let conf_high = this.gene.conf_high![i];
       let fixed_effect = this.gene.fixed_effect![i];
       let p_val = -1*Math.log10(Number(this.gene.p_val![i]));
-      console.log(p_val)
-      console.log(this.gene.p_val![i])
       if(conf_low == 'NA' || conf_high == 'NA' || fixed_effect == 'NA' || isNaN(Number(this.gene.p_val![i])) || !isFinite(p_val)){
         continue
       }      
