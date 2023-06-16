@@ -237,7 +237,7 @@ export class GeneCardComponent implements OnInit {
       let p_val = -1*Math.log10(Number(this.gene.p_val![i]));
       console.log(p_val)
       console.log(this.gene.p_val![i])
-      if(conf_low == 'NA' || conf_high == 'NA' || fixed_effect == 'NA' || isNaN(p_val) ){
+      if(conf_low == 'NA' || conf_high == 'NA' || fixed_effect == 'NA' || isNaN(Number(this.gene.p_val![i])) || !isFinite(p_val)){
         continue
       }      
       if(Number(p_val) > 1.3){
