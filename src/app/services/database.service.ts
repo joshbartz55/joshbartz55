@@ -10,7 +10,7 @@ import { Indices } from '../models/indices.model';
 import { Image } from '../models/image.model';
 
 //Dev Base URL
-//const baseUrl = 'http://localhost:8080/api/';
+//const baseUrl = 'http://localhost:80/api/';
 
 //Prod Base URL
 const baseUrl = 'http://128.101.51.116:3304/api/';
@@ -23,7 +23,8 @@ const diffExpUrl = baseUrl.concat('differentialExpression'.toString());
 const indicesUrl = baseUrl.concat('indices'.toString());
 const imagesUrl = baseUrl.concat('images'.toString());
 const linRegUrl = baseUrl.concat('linearRegression'.toString());
-
+const cleanDataUrl =  baseUrl.concat('cleanData'.toString());
+const rawDataUrl =  baseUrl.concat('sample/rawData'.toString());
 
 @Injectable({
   providedIn: 'root'
@@ -73,7 +74,14 @@ export class DatabaseService {
   }
 
   getLinRegGraph(pmid:number, run_id:number, cluster_id:string, cell_type:string, gene: string): Observable<any> {
-    console.log(`${linRegUrl}/${pmid}/${run_id}/${cluster_id}/${cell_type}/${gene}`)
     return this.http.get<Image[]>(`${linRegUrl}/${pmid}/${run_id}/${cluster_id}/${cell_type}/${gene}`);
+  }
+
+  getCleanData(table_num:number): Observable<any> {
+    return this.http.get<any[]>(`${cleanDataUrl}/${table_num}`);
+  }
+
+  getRawData(sample_num:number): Observable<ArrayBuffer> {
+    return this.http.get(`${rawDataUrl}/${sample_num}`,{responseType: 'arraybuffer'});
   }
 }

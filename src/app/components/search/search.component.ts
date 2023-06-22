@@ -1,12 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { DisplaySample } from 'src/app/models/displaySample';
-import { Metadata } from 'src/app/models/metadata.model';
-import { Sample } from 'src/app/models/sample.model';
-import { User } from 'src/app/models/user.model';
+import { saveAs } from 'file-saver';
 import { DatabaseService } from 'src/app/services/database.service';
 import { DatabaseConstsService } from '../../services/database-consts.service'
 import themes from 'devextreme/ui/themes';
 import { ApexNonAxisChartSeries, ApexResponsive, ApexChart, ApexLegend, ApexDataLabels, ApexPlotOptions, ApexTheme, ApexStroke, ApexAxisChartSeries, ApexXAxis, ApexYAxis, ApexGrid} from "ng-apexcharts";
+import { Console } from 'console';
 
 export type DonutChartOptions = {
   series: ApexNonAxisChartSeries;
@@ -43,10 +41,12 @@ export class SearchComponent implements OnInit {
   public tissue_chart_options: Partial<DonutChartOptions>;
   public sex_chart_options: Partial<DonutChartOptions>;
   public age_chart_options: Partial<BarChartOptions>;
+  public health_chart_options: Partial<DonutChartOptions>;
 
   tissue_dict: any = {};
   sex_dict: any = {};
   age_dict: any = {'youth':0,'teen':0,'young_adult':0,'adult':0,'middle_age':0,'elderly':0,'centenarian':0,}
+  health_dict: any = {'Healthy':0, 'Cancer':0, 'Other':0, 'Unkown': 0}
   cell_total: number;
   min_age = -1
   max_age = 1000
@@ -67,6 +67,8 @@ export class SearchComponent implements OnInit {
   checkBoxesMode: string;
   /*display might need to be display? */
   display: any[];
+  selectedRowData: any[] = [];
+  selectedRowKeys: any[] = [];
   query_completed = false;
 
   maps = [{text: "Tissue"}, {text: "Sex"}, {text: "Age"}, {text: "Health"}];
@@ -134,6 +136,8 @@ export class SearchComponent implements OnInit {
           this.tissue_chart_options = this.makeDonutChart(this.tissue_dict)
           this.sex_chart_options = this.makeDonutChart(this.sex_dict)
           this.age_chart_options = this.makeBarChart(this.age_dict)
+          this.health_chart_options = this.makeDonutChart(this.health_dict)  
+          console.log(this.health_chart_options)        
           this.query_completed = true
         },
         error: (e) => console.error(e)
@@ -155,13 +159,62 @@ export class SearchComponent implements OnInit {
   onHealthChanged($event: any){
     this.selected_health = $event.value
   }
-  onItemClick($event: any){
+  switchSelectedDownloadMethod($event: any){
     this.selected_download_method=$event.itemData.name
-    console.log(this.selected_download_method)
   }
-  download($event: Event){
-    console.log($event)
+
+  onSelectionChanged(event: any) {
+    this.selectedRowKeys = event.selectedRowKeys;
+    this.selectedRowData = event.selectedRowsData;
+  }  
+
+  containsAnyValue(string: string, values: string[]): boolean {
+    return values.some(value => string.includes(value));
   }
+  
+
+  downloadWrapper($event: any){
+    if(this.selected_download_method == this.download_options[0].name){
+      for(let i=0; i<this.selectedRowData.length; i++){
+        this.dowloadCleanData(this.selectedRowData[i].sample_id)
+      }
+    } else{
+      for(let i=0; i<this.selectedRowData.length; i++){
+        this.dowloadRawData(this.selectedRowData[i].sample_id)
+      }
+    }
+  }
+  dowloadCleanData(id:number){
+    this.databaseService.getCleanData(id)
+    .subscribe({
+      next: (data) => {
+        var csvData:any[] = []
+        const filename = 'Data_' + id
+        for(let i=0; i<data.length; i++){
+          csvData = csvData.concat(data[i])
+        }
+        var csvBlobData =csvData.join('\n')
+        console.log(csvData)
+        console.log(csvBlobData)
+        const blob = new Blob([csvBlobData], { type: 'text/csv' });
+        saveAs(blob, filename);
+      },
+      error: (e) => console.error(e)
+    });
+  }
+
+  dowloadRawData(id: number){
+    this.databaseService.getRawData(id)
+    .subscribe({
+      next: (data) => {
+        const filename = 'Data_' + id
+        const blob = new Blob([data], { type: 'application/zip' });
+        saveAs(blob, filename);
+      },
+      error: (e) => console.error(e)
+    });
+  }
+
 
   /* NEW STUFF, QUESTIONABLE */
 
@@ -172,7 +225,8 @@ export class SearchComponent implements OnInit {
   makeDictionaries(){
     let temp_tissue_dict: any = {};
     let temp_sex_dict: any = {};
-    let temp_age_dict: any = {'youth':0,'teen':0,'young_adult':0,'adult':0,'middle_age':0,'elderly':0,'centenarian':0,}
+    let temp_age_dict: any = {'youth':0,'teen':0,'young_adult':0,'adult':0,'middle_age':0,'elderly':0,'centenarian':0}
+    let temp_health_dict: any = {'Healthy':0, 'Cancer':0, 'Other':0, 'Unkown': 0}
     let cell_count = 0;
     
     for(let i=0; i<this.display.length; i++){
@@ -191,20 +245,34 @@ export class SearchComponent implements OnInit {
       //get tissue info
       let tissue = sample.tissue.includes('blood') ? 'blood' : sample.tissue;
       //tissue = this.selected_tissues.includes(tissue) ? tissue : 'other';
-
-      //get tissue info
+      //get sex info
       let sex = sample.sex
-
-
-
-      //set values
+      //get health info
+      let disease = sample.disease_status
+      if(disease == null){
+        disease = 'Unkown'
+      }
+      else{
+        if (this.containsAnyValue(disease, ['healthy', 'normal', 'NA', 'Normal'])){
+          disease = 'Healthy'
+        }
+        else if (this.containsAnyValue(disease, ['cancer', 'carcinoma', 'Cancer'])){
+          disease = 'Cancer'
+        }
+        else{
+          disease = 'Other'
+        }
+      }
+      //set dict values
       temp_tissue_dict[tissue] = temp_tissue_dict[tissue] ? temp_tissue_dict[tissue] + 1 : 1;
       temp_sex_dict[sex] = temp_sex_dict[sex] ? temp_sex_dict[sex] + 1 : 1;
       cell_count = cell_count + Number(sample.num_cells);
+      temp_health_dict[disease] = temp_health_dict[disease] ? temp_health_dict[disease] + 1 : 1;
     }
     this.tissue_dict = temp_tissue_dict;
     this.sex_dict = temp_sex_dict;
     this.age_dict = temp_age_dict;
+    this.health_dict = temp_health_dict;
     this.cell_total = cell_count;
   }
   makeDonutChart(input_dict: any){
@@ -408,7 +476,6 @@ export class SearchComponent implements OnInit {
   }
 
   formatRow($event: any){
-    console.log($event)
     if($event.rowType == 'header'){
       $event.rowElement.style.backgroundColor = "#EAE7DC";
       $event.rowElement.style.color = "black";

@@ -134,6 +134,19 @@
             [yaxis]="age_chart_options.yaxis!"            
             ></apx-chart>
         </div>
+        <div id="health_chart" *ngIf="displayed_map=='Health' && query_completed" class="health_chart">
+            <apx-chart
+            [series]="health_chart_options.series!"
+            [chart]="health_chart_options.chart!"
+            [labels]="health_chart_options.labels!"
+            [legend]="health_chart_options.legend!"
+            [responsive]="health_chart_options.responsive!"
+            [dataLabels]="health_chart_options.data_labels!"
+            [plotOptions]="health_chart_options.options!"
+            [theme]="health_chart_options.theme!"
+            [stroke]="health_chart_options.stroke!"          
+            ></apx-chart>
+        </div>
     </div>
 </div>
 <dx-button
@@ -153,7 +166,8 @@
     [items]="download_options"
     displayExpr="name"
     keyExpr="id"
-    (onItemClick)="onItemClick($event)"
+    (onItemClick)="switchSelectedDownloadMethod($event)"
+    (onButtonClick)="downloadWrapper($event)"
 ></dx-drop-down-button>
 
 <div *ngIf="query_completed">
@@ -164,6 +178,8 @@
       keyExpr="sample_id"
       [showBorders]="true"
       (onRowPrepared)="formatRow($event)"
+      [selectedRowKeys]="selectedRowKeys"
+      (onSelectionChanged)="onSelectionChanged($event)"
       >
        <dxo-selection
             selectAllMode="allPages"
