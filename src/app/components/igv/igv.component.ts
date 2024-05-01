@@ -145,8 +145,7 @@ export class IgvComponent implements AfterViewInit, OnDestroy {
           this.display = data;
           this.getDiffExpData()
           },
-        error: (e) => console.error(e),
-        complete: () => this.loading = false 
+        error: (e) => console.error(e)
       });
   }
 
@@ -171,7 +170,8 @@ export class IgvComponent implements AfterViewInit, OnDestroy {
         // this.original_genes = this.prettyOrderer(this.original_genes)
         // this.genes = this.prettyOrderer(this.genes)
        },
-       error: (e) => console.error(e)
+       error: (e) => console.error(e),
+       complete: () => this.loading = false 
      });
     this.found = true
  }
