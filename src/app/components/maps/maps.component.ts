@@ -52,11 +52,18 @@ export class MapsComponent implements OnInit {
     }
 
   getClusterImages(){
-    this.databaseService.getImage(this.selected_info.pmid, 1).subscribe({
+    //this.databaseService.getImage(this.selected_info.pmid, 1).subscribe({
+    this.databaseService.getImage(30348985, 1).subscribe({
       next: (data) => {
         this.image = data;
-        this.tsne = this.decodeImage(this.image[0].TSNE!)
+        this.image[0].TSNE = null
         this.umap = this.decodeImage(this.image[0].UMAP!)
+        if(this.image[0].TSNE! != null){
+          this.tsne = this.decodeImage(this.image[0].TSNE!)
+        }
+        else{
+          this.tsne = null
+        }
      },
       error: (e) => console.error(e)
     });
@@ -106,7 +113,7 @@ export class MapsComponent implements OnInit {
         data: this.line_data
       }],
       chart: {
-        height: 417,
+        height: 350,
         type: 'line'
       },
       fill: {

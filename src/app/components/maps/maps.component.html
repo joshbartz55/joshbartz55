@@ -9,8 +9,14 @@
 <p style="font-size: 24px; font-weight: bold; text-align: center; margin: 0%;">{{selected_info.cell_type}}</p>
 
 <img *ngIf="display=='umap'" id="myimage" [src]='this.umap'  width="85%" height="85%"/>
-<img *ngIf="display=='tsne'" id="myimage" [src]='this.tsne'  width="85%" height="85%"/>
-<div *ngIf="display=='Linear Regression'" width="85%" height="85%">
+<img *ngIf="display === 'tsne' && this.tsne !== null" id="myimage" [src]="this.tsne" width="85%" height="85%" />
+<div *ngIf="display === 'tsne' && this.tsne === null" id="myimage" width="85%" height="85%">
+    <p style="text-align: center; color: red;">
+        TSNE not available for this study
+    </p>
+</div>
+
+<div *ngIf="display=='Linear Regression'" width="85%" height="100%">
     <apx-chart
     [series]="linReg_chart_options.series!"
     [chart]="linReg_chart_options.chart!"

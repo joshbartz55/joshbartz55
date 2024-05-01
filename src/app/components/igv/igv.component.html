@@ -36,6 +36,9 @@
       paginate = 'true'
    ></dx-tag-box>
 </div>
-<div *ngFor="let geneset of this.grouped_genes">
-   <app-gene-card [gene_list]="geneset" [indices]="selected_indices"></app-gene-card>
+<div class="search-results" [class.searching]="loading">
+   <div *ngFor="let geneset of this.grouped_genes">
+      <app-gene-card [gene_list]="geneset" [indices]="selected_indices"></app-gene-card>
+   </div>
+   <div *ngIf="loading" class="loading-overlay">Loading...</div>
 </div>

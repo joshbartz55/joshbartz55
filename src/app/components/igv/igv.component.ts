@@ -53,6 +53,8 @@ export class IgvComponent implements AfterViewInit, OnDestroy {
    original_indices: Indices[];
    gene_names: string[] = [];
    found = false;
+   loading: boolean = false;
+
 
    constructor(private databaseService: DatabaseService, databaseConstService: DatabaseConstsService) {
       this.tissue_types = databaseConstService.getTissueTypes();
@@ -132,6 +134,7 @@ export class IgvComponent implements AfterViewInit, OnDestroy {
       })
    }
    getInRangeGenes() {
+    this.loading = true
     const loci = this.browser.currentLoci().split(':');
     const chr = loci[0].replace('chr','')
     const start = Math.floor(loci[1].split('-')[0])
@@ -141,14 +144,11 @@ export class IgvComponent implements AfterViewInit, OnDestroy {
         next: (data) => {
           this.display = data;
           this.getDiffExpData()
-        },
-        error: (e) => console.error(e)
+          },
+        error: (e) => console.error(e),
+        complete: () => this.loading = false 
       });
   }
-  test(){
-    console.log(this.genes)
-    console.log(this.original_genes)
-    }
 
   getDiffExpData() {
    this.gene_names = this.display!.map((obj)=>obj.en_id!)
@@ -159,15 +159,13 @@ export class IgvComponent implements AfterViewInit, OnDestroy {
     return parseInt(strippedString, 10);
     });
 
-
    this.databaseService.getGeneDiffExp(convertedList)
      .subscribe({
        next: (data) => {
-        console.log(data)
          this.original_genes = data;
          this.genes = data;
          this.original_grouped_genes = this.convertDiffExpData(this.original_genes)
-         this.grouped_genes = this.convertDiffExpData(this.genes)
+         this.subsetCorrectCellAndTissueTypes()
         //this.original_genes = this.assignGeneNames(this.original_genes)
         //this.genes = this.assignGeneNames(this.genes)
         // this.original_genes = this.prettyOrderer(this.original_genes)
@@ -200,6 +198,20 @@ export class IgvComponent implements AfterViewInit, OnDestroy {
     return(Object.values(groupedLists));
    }
 
+   subsetCorrectCellAndTissueTypes(){
+    this.grouped_genes = this.original_grouped_genes
+    for(let i = 0; i < this.grouped_genes.length; i++){
+      let geneset = this.grouped_genes[i]
+      for(let j = 0; j < geneset.length; j++){
+        let gene = geneset[j]
+        if(!this.selected_cells.includes(gene.cell_type!)){
+          this.grouped_genes[i].splice(j,1)
+        }
+      }
+    }
+   }
+
+
   //  assignGeneNames(gene_list:DiffExp[]){
   //   let id_name_map = new Map<string|undefined,string|undefined>();
   //   this.display?.map(item => id_name_map.set(item.en_id,item.gene_name));
@@ -215,10 +227,15 @@ export class IgvComponent implements AfterViewInit, OnDestroy {
 
    onTissuesChanged($event: any){
     this.selected_tissues = $event.value
+    this.subsetCorrectCellAndTissueTypes()
   }
 
   onCellChanged($event: any){
     this.selected_cells = $event.value
+    console.log(this.grouped_genes)
+    this.subsetCorrectCellAndTissueTypes()
+    console.log(this.grouped_genes)
+
   }
 
   // applyFilter(){

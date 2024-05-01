@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import {ApexAxisChartSeries,ApexChart,ApexPlotOptions,ApexXAxis, ApexTitleSubtitle, ApexTooltip, ApexYAxis, ApexMarkers, ApexFill, ApexAnnotations} from "ng-apexcharts";
 import { DiffExp } from 'src/app/models/diffExp.model';
 import { Indices } from 'src/app/models/indices.model';
@@ -111,7 +111,6 @@ export class GeneCardComponent implements OnInit {
         events:{
           dataPointSelection: (e, chart, opts) => {
             let slected_gene = this.gene_list[opts.dataPointIndex]
-            console.log(slected_gene)
             this.to_map = {
               pmid:slected_gene.pmid,
               cell_type:slected_gene.cell_type, 
@@ -172,8 +171,16 @@ export class GeneCardComponent implements OnInit {
       }
     };
     this.createDisplayData()
-
   }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log('teest')
+    // Check if the 'gene_list' input has changed
+    if (changes['gene_list'] && !changes['gene_list'].firstChange) {
+      this.createDisplayData(); // Call the function when 'gene_list' changes
+    }
+  }
+
   createDisplayData(){
     let model_data = []
     let meta_series_info = [0,0,0,0,0] //[significant decrease, slight decrease, no change, slight increase, significant increase]

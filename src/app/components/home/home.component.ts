@@ -122,7 +122,8 @@ export class HomeComponent implements OnInit {
     
     for(let i=0; i<this.sample_info.length; i++){
       let sample = this.sample_info[i];
-      let age = sample.age.includes('fetal')? 0 : sample.age;
+      let age = Number(sample.age.includes('fetal')? 0 : sample.age);
+
       
 
       //Get Age information to always be displayed
