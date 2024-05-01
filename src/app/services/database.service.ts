@@ -13,7 +13,7 @@ import { Image } from '../models/image.model';
 //const baseUrl = 'http://localhost:80/api/';
 
 //Prod Base URL
-const baseUrl = 'http://128.101.51.116:3304/api/';
+const baseUrl = 'http://160.94.105.82:3304/api/';
 
 //query paths
 const metaUrl = baseUrl.concat('metadata'.toString());
