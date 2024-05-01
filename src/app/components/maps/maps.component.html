@@ -7,9 +7,9 @@
     ></dx-button-group>
 </div>
 <p style="font-size: 24px; font-weight: bold; text-align: center; margin: 0%;">{{selected_info.cell_type}}</p>
-<!-- 
+
 <img *ngIf="display=='umap'" id="myimage" [src]='this.umap'  width="85%" height="85%"/>
-<img *ngIf="display=='tsne'" id="myimage" [src]='this.tsne'  width="85%" height="85%"/> -->
+<img *ngIf="display=='tsne'" id="myimage" [src]='this.tsne'  width="85%" height="85%"/>
 <div *ngIf="display=='Linear Regression'" width="85%" height="85%">
     <apx-chart
     [series]="linReg_chart_options.series!"

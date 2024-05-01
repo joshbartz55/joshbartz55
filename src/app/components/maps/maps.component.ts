@@ -78,7 +78,6 @@ export class MapsComponent implements OnInit {
 
   prepGraphData(){
     //Prepare Point Data
-    console.log(this.selected_info.slope, this.selected_info.intercept)
     let points = []
     for(let i=0; i<this.ages.length; i++){
       let point = [Number(this.ages[i]), Number(this.exp[i]).toFixed(3)]
