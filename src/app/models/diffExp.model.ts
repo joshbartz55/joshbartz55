@@ -1,29 +1,25 @@
 export class DiffExp {
-    gene?: string;
-    fixed_effect?: string | string[];
-    conf_high?: string | string[];
-    conf_low?: string | string[];
-    y_int?: string | string[];
-    p_val?: string | string[];
+    gene?: string | number;
+    pmid?: number;
+    cell_type?: string;
+    cell_type2?: string;
+    cell_type3?: string;
+    lfc?: number;
+    slope?: number;
+    inter?: number;
+    p_value?: number;
+    plotting_id?: number;
 
-    constructor(gene: string, fixed_effect: string | string[], conf_high: string | string[], conf_low: string | string[], y_int: string | string[], p_val: string | string[]) {
+    constructor(gene: string | number, pmid: number,cell_type: string, cell_type2: string, cell_type3: string, lfc: number, slope: number, inter: number, p_value: number, plotting_id: number ) {
       this.gene = gene;
-      this.fixed_effect = fixed_effect;
-      this.conf_high = conf_high;
-      this.conf_low = conf_low;
-      this.y_int = y_int;
-      this.p_val = p_val;
-    }
-
-    convertToList() {
-      let convertedDiffExp = new DiffExp(
-        this.gene!,
-        String(this.fixed_effect).split(" ").slice(1),
-        String(this.conf_high).split(" ").slice(1),
-        String(this.conf_low).split(" ").slice(1),
-        String(this.y_int).split(" ").slice(1),
-        String(this.p_val).split(" ").slice(1),
-      );
-      return convertedDiffExp;
+      this.pmid = pmid;
+      this.cell_type = cell_type;
+      this.cell_type2 = cell_type2;
+      this.cell_type3 = cell_type3;
+      this.lfc = lfc;
+      this.slope = slope;
+      this.inter = inter;
+      this.p_value= p_value;
+      this.plotting_id = plotting_id;
     }
   }

@@ -20,40 +20,30 @@
         >
       </apx-chart>
       <h2 class="gene-info">
-        Clusters Detected: {{gene.fixed_effect.length}}
+        Clusters Detected: {{gene_list.length}}
         Studies Detected: {{num_studies}}
       </h2>
     </div>
     <div *dxTemplate="let gene of 'item'">
-        <div id="chart" class="flex-container">
-            <div class="flex-child1">
-                <apx-chart
-                    [series]="model_chart_options.series!"
-                    [chart]="model_chart_options.chart!"
-                    [plotOptions]="model_chart_options.plotOptions!"
-                    [xaxis]="model_chart_options.xaxis!"
-                    [title]="model_chart_options.title!"
-                    [tooltip]="model_chart_options.tooltip!"
-                    [annotations]="model_chart_options.annotations!"
-                ></apx-chart>
-            </div>
-            <div class="flex-child2">
-                <apx-chart
-                    [series]="pval_chart_options.series!"
-                    [chart]="pval_chart_options.chart!"
-                    [plotOptions]="pval_chart_options.plotOptions!"
-                    [xaxis]="pval_chart_options.xaxis!"
-                    [yaxis]="pval_chart_options.yaxis!"
-                    [markers]="pval_chart_options.markers!"
-                    [title]="pval_chart_options.title!"
-                    [tooltip]="pval_chart_options.tooltip!"
-                    [annotations]="pval_chart_options.annotations!"
-                ></apx-chart>
-            </div>
-            <div class="test" *ngIf="model_selected">
-                <app-maps [selected_info]="to_map" [en_id]="en_id" class="scaled"></app-maps>
-            </div>
-        </div>
-    </div>
+      <div id="chart" class="flex-container">
+          <div class="flex-child1">
+              <apx-chart
+                  [series]="model_chart_options.series!"
+                  [chart]="model_chart_options.chart!"
+                  [plotOptions]="model_chart_options.plotOptions!"
+                  [markers]="model_chart_options.markers!"
+                  [xaxis]="model_chart_options.xaxis!"
+                  [title]="model_chart_options.title!"
+                  [tooltip]="model_chart_options.tooltip!"
+                  [annotations]="model_chart_options.annotations!"
+              ></apx-chart>
+          </div>
+          <div class="test-container">
+              <div class="test" *ngIf="model_selected">
+                  <app-maps [selected_info]="to_map" [en_id]="en_id" class="scaled"></app-maps>
+              </div>
+          </div>
+      </div>
+    </div>  
   </dx-accordion>
 </div>

@@ -25,6 +25,8 @@ const imagesUrl = baseUrl.concat('images'.toString());
 const linRegUrl = baseUrl.concat('linearRegression'.toString());
 const cleanDataUrl =  baseUrl.concat('cleanData'.toString());
 const rawDataUrl =  baseUrl.concat('sample/rawData'.toString());
+const linRegDataUrl =  baseUrl.concat('linRegData'.toString());
+
 
 @Injectable({
   providedIn: 'root'
@@ -75,6 +77,10 @@ export class DatabaseService {
 
   getLinRegGraph(pmid:number, run_id:number, cluster_id:string, cell_type:string, gene: string): Observable<any> {
     return this.http.get<Image[]>(`${linRegUrl}/${pmid}/${run_id}/${cluster_id}/${cell_type}/${gene}`);
+  }
+
+  getLinRegData(g_id: number): Observable<any> {
+    return this.http.get<any[]>(`${linRegDataUrl}/${g_id}`);
   }
 
   getCleanData(table_num:number): Observable<any> {

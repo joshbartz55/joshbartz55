@@ -3,7 +3,7 @@
 
 <div class="flex-container">
    <button color="accent" class="button" (click)="getInRangeGenes()">Gene Info</button>
-   <button color="accent" class="button" (click)="applyFilter()" *ngIf="this.genes.length > 0">Apply</button>
+   <button color="accent" class="button" (click)="getInRangeGenes()" *ngIf="this.genes.length > 0">Apply</button>
    <dx-tag-box
       *ngIf="this.genes.length > 0"
       class="flex-child"
@@ -36,6 +36,6 @@
       paginate = 'true'
    ></dx-tag-box>
 </div>
-<div *ngFor="let gene of this.genes">
-   <app-gene-card [gene]="gene" [indices]="selected_indices" [en_id]="getEN_ID(gene.gene)"></app-gene-card>
+<div *ngFor="let geneset of this.grouped_genes">
+   <app-gene-card [gene_list]="geneset" [indices]="selected_indices"></app-gene-card>
 </div>

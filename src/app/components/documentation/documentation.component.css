@@ -1,36 +1,84 @@
-#btnControl {
-    display: none;
-}
-
-.btn {
-    width: 60px;
-    height: 20px;
-    background: silver;
-    border-radius: 5px;
-    padding: 1px 3px;
-    box-shadow: 1px 1px 1px #000;
-    display: block;
+.button-container {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .image-button {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0 5px;
+    border: none;
+    background: none;
+    padding: 0;
     text-align: center;
-    background-image: linear-gradient(to bottom, #f4f5f5, #dfdddd);
-    font-family: arial;
-    font-size: 12px;
-    line-height:20px;
+    position: relative;
+  }
+  
+  .image-button img {
+    max-width: 100%;
+    height: auto;
+    outline: 2px solid black;
+  }
+  
+  .button-text {
+    color: black;
+    font-size: 30px;
+    font-Family: 'RobotoCondensed-Bold';
+      text-shadow: -1px -1px 0 white,  
+                1px -1px 0 beige,
+                -1px  1px 0 beige,
+                1px  1px 0 beige;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  
+
+.strong {
+    font-weight: bold;
+  }
+
+.main-documentation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
-.btn:hover {
-    background-image: linear-gradient(to bottom, #c3e3fa, #a5defb);
+.flex-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch; /* Ensure items stretch vertically */
+}
+
+.left-button,
+.right-button {
+  flex-grow: 1;
+  background-color: #ccc; /* Adjust as needed */
+  background-size: cover;
+  font-size: 30px; /* Set font size */
+  font-family: 'RobotoCondensed-Bold'; /* Set font family */
+  text-shadow: -1px -1px 0 white, 1px -1px 0 beige, -1px 1px 0 beige, 1px 1px 0 beige; /* Set text shadow */
+}
+
+.center-content {
+  width: 70%;
+}
+
+.center-content p {
+  margin-bottom: 10px; /* Adjust as needed */
 }
 
 
-.btn:active {
-    margin-left: 1px 1px 0;
-    box-shadow: -1px -1px 1px #000;
-    outline: 1px solid black;
-    background-image: linear-gradient(to top, #f4f5f5, #dfdddd);
+.center-content img {
+    display: inline-block; /* Make the image inline-block */
+    outline: 2px solid black; /* Add a black outline with a thickness of 2px */
+    max-width: 85%; /* Limit the image width to 85% of the container's width */
+    height: auto; /* Maintain aspect ratio */
+    filter: brightness(110%) contrast(90%) saturate(100%); /* Apply color shift */
 }
-
-#btnControl:checked + label {
-    width: 70px;
-    height: 74px;
-    line-height: 74px;
-}
+  

@@ -140,8 +140,6 @@ export class HomeComponent implements OnInit {
       //get tissue info
       let sex = sample.sex
 
-
-
       //set values
       temp_tissue_dict[tissue] = temp_tissue_dict[tissue] ? temp_tissue_dict[tissue] + 1 : 1;
       temp_sex_dict[sex] = temp_sex_dict[sex] ? temp_sex_dict[sex] + 1 : 1;

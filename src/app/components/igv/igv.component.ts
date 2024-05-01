@@ -26,7 +26,7 @@ export class IgvComponent implements AfterViewInit, OnDestroy {
    @ViewChild('temp')temp!: ElementRef;
    @ViewChild("chart") chart: ChartComponent;
 
-  to_child = new DiffExp('TEST GENE', ['1','2','3'],['2','3','4'],['0','1','2'],['1,1,1'],['1,1,1'])
+  //to_child = new DiffExp('TEST GENE', ['1','2','3'],['2','3','4'],['0','1','2'],['1,1,1'],['1,1,1'])
    //IGV Variables
    browser: any;
    trackUrl = 'https://www.encodeproject.org/files/ENCFF356YES/@@download/ENCFF356YES.bigWig'
@@ -47,6 +47,8 @@ export class IgvComponent implements AfterViewInit, OnDestroy {
    display?: Positions[];
    original_genes: DiffExp[];
    genes: DiffExp[] = [];
+   grouped_genes: DiffExp[][] =[];
+   original_grouped_genes: DiffExp[][] =[];
    selected_indices: Indices[];
    original_indices: Indices[];
    gene_names: string[] = [];
@@ -150,19 +152,26 @@ export class IgvComponent implements AfterViewInit, OnDestroy {
 
   getDiffExpData() {
    this.gene_names = this.display!.map((obj)=>obj.en_id!)
+   const convertedList: number[] = this.gene_names.map((str) => {
+    // Remove 'ENSG' from the beginning of each string
+    const strippedString = str.replace('ENSG', '');
+    // Convert the remaining string to a number
+    return parseInt(strippedString, 10);
+    });
 
 
-   this.databaseService.getGeneDiffExp(this.gene_names)
+   this.databaseService.getGeneDiffExp(convertedList)
      .subscribe({
        next: (data) => {
+        console.log(data)
          this.original_genes = data;
          this.genes = data;
-         this.original_genes = this.convertDiffExpData(this.original_genes)
-         this.genes = this.convertDiffExpData(this.genes)
-         this.original_genes = this.assignGeneNames(this.original_genes)
-         this.genes = this.assignGeneNames(this.genes)
-         this.original_genes = this.prettyOrderer(this.original_genes)
-         this.genes = this.prettyOrderer(this.genes)
+         this.original_grouped_genes = this.convertDiffExpData(this.original_genes)
+         this.grouped_genes = this.convertDiffExpData(this.genes)
+        //this.original_genes = this.assignGeneNames(this.original_genes)
+        //this.genes = this.assignGeneNames(this.genes)
+        // this.original_genes = this.prettyOrderer(this.original_genes)
+        // this.genes = this.prettyOrderer(this.genes)
        },
        error: (e) => console.error(e)
      });
@@ -172,28 +181,37 @@ export class IgvComponent implements AfterViewInit, OnDestroy {
       igv.removeAllBrowsers()
    }
 
-   convertDiffExpData(original: any[]){
-      let listed_data: DiffExp[] = []
-      for(let i = 0; i < original.length; i++){
-         let temp = original[i]
-         let new_diff_exp = new DiffExp(temp.gene, temp.fixed_effect, temp.conf_high, temp.conf_low, temp.y_int, temp.p_val).convertToList()
-         listed_data.push(new_diff_exp)
+   convertDiffExpData(gene_list: any[]){
+      for(let i = 0; i < gene_list.length; i++){
+         let original_name = gene_list[i].gene
+         let temp_string = "00000000000" +original_name.toString()
+         let gene_name = "ENSG" + temp_string.slice(-11)
+         gene_list[i].gene = gene_name
       }
-      return listed_data;
+      let groupedLists: { [gene: string]: DiffExp[] } = gene_list.reduce((acc, obj) => {
+        if (!acc[obj.gene]) {
+            acc[obj.gene] = [];
+        }
+        acc[obj.gene].push(obj);
+        return acc;
+    }, {} as { [gene: string]: DiffExp[] });
+    
+    // Convert the object to an array of arrays
+    return(Object.values(groupedLists));
    }
 
-   assignGeneNames(gene_list:DiffExp[]){
-    let id_name_map = new Map<string|undefined,string|undefined>();
-    this.display?.map(item => id_name_map.set(item.en_id,item.gene_name));
-    for(let i = 0; i<gene_list.length; i++){
-      let id: string|undefined = gene_list[i].gene
-      let name = id_name_map.get(id)
-      if(name != ''){
-        gene_list[i].gene = name
-      }
-    }
-    return(gene_list)
-   }
+  //  assignGeneNames(gene_list:DiffExp[]){
+  //   let id_name_map = new Map<string|undefined,string|undefined>();
+  //   this.display?.map(item => id_name_map.set(item.en_id,item.gene_name));
+  //   for(let i = 0; i<gene_list.length; i++){
+  //     let id: string|undefined = gene_list[i].gene
+  //     let name = id_name_map.get(id)
+  //     if(name != ''){
+  //       gene_list[i].gene = name
+  //     }
+  //   }
+  //   return(gene_list)
+  //  }
 
    onTissuesChanged($event: any){
     this.selected_tissues = $event.value
@@ -203,31 +221,31 @@ export class IgvComponent implements AfterViewInit, OnDestroy {
     this.selected_cells = $event.value
   }
 
-  applyFilter(){
-    let new_indices = []
-    for(let i = 0; i< this.original_indices.length; i++){
-      if(this.selected_tissues.includes(this.original_indices[i].tissue_type!) && this.selected_cells.includes(this.original_indices[i].cell_type!)){
-        new_indices.push(i)
-      }
-    }
-    let filtered_genes = [];
-    console.log(this.original_genes)
-    for(let i = 0; i<this.original_genes.length; i++){
-      let gene = this.original_genes[i]
-      let temp = new DiffExp(
-        gene.gene!,
-        this.reorder(gene.fixed_effect, new_indices),
-        this.reorder(gene.conf_high, new_indices),
-        this.reorder(gene.conf_low, new_indices),
-        this.reorder(gene.y_int, new_indices),
-        this.reorder(gene.p_val, new_indices)
-      )
-      filtered_genes.push(temp)
-    }
-    console.log(filtered_genes)
-    this.genes = filtered_genes
-    this.selected_indices = this.reorder(this.original_indices, new_indices)
-  }
+  // applyFilter(){
+  //   let new_indices = []
+  //   for(let i = 0; i< this.original_indices.length; i++){
+  //     if(this.selected_tissues.includes(this.original_indices[i].tissue_type!) && this.selected_cells.includes(this.original_indices[i].cell_type!)){
+  //       new_indices.push(i)
+  //     }
+  //   }
+  //   let filtered_genes = [];
+  //   console.log(this.original_genes)
+  //   for(let i = 0; i<this.original_genes.length; i++){
+  //     let gene = this.original_genes[i]
+  //     let temp = new DiffExp(
+  //       gene.gene!,
+  //       this.reorder(gene.fixed_effect, new_indices),
+  //       this.reorder(gene.conf_high, new_indices),
+  //       this.reorder(gene.conf_low, new_indices),
+  //       this.reorder(gene.y_int, new_indices),
+  //       this.reorder(gene.p_val, new_indices)
+  //     )
+  //     filtered_genes.push(temp)
+  //   }
+  //   console.log(filtered_genes)
+  //   this.genes = filtered_genes
+  //   this.selected_indices = this.reorder(this.original_indices, new_indices)
+  // }
 
   reorder(list: any, ids: any){
     let new_list = []
@@ -238,7 +256,7 @@ export class IgvComponent implements AfterViewInit, OnDestroy {
     return(new_list)
   }
 
-  getEN_ID(gene:string | undefined){
+  getEN_ID(gene:string | number | undefined){
     for(let i = 0; i<this.display!.length; i++){
       let position = this.display![i]
       if(position.en_id == gene || position.gene_name == gene){
@@ -248,20 +266,20 @@ export class IgvComponent implements AfterViewInit, OnDestroy {
     return('ERROR NO GENE OF THIS NAME FOUND')
   }
 
-  prettyOrderer(diff_list: DiffExp[]){
-    let named_list = []
-    let ensg_list = []
-    for(let i = 0; i<diff_list.length; i++){
-      let item = diff_list[i]
-      if(item.gene!.startsWith('ENSG')){
-        ensg_list.push(item)
-      }
-      else{
-        named_list.push(item)
-      }
-    }
-    named_list.sort((a, b) => (a.gene! > b.gene!) ? 1 : -1)
-    ensg_list.sort((a, b) => (a.gene! > b.gene!) ? 1 : -1)
-    return(named_list.concat(ensg_list))
-  }
+  // prettyOrderer(diff_list: DiffExp[]){
+  //   let named_list = []
+  //   let ensg_list = []
+  //   for(let i = 0; i<diff_list.length; i++){
+  //     let item = diff_list[i]
+  //     if(item.gene!.startsWith('ENSG')){
+  //       ensg_list.push(item)
+  //     }
+  //     else{
+  //       named_list.push(item)
+  //     }
+  //   }
+  //   named_list.sort((a, b) => (a.gene! > b.gene!) ? 1 : -1)
+  //   ensg_list.sort((a, b) => (a.gene! > b.gene!) ? 1 : -1)
+  //   return(named_list.concat(ensg_list))
+  // }
 }

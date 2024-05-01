@@ -49,7 +49,7 @@ export class SearchComponent implements OnInit {
   health_dict: any = {'Healthy':0, 'Cancer':0, 'Other':0, 'Unkown': 0}
   cell_total: number;
   min_age = -1
-  max_age = 1000
+  max_age = 1000 
 
   tissue_types: string[] = [];
   cell_types: string[] = [];
@@ -472,6 +472,7 @@ export class SearchComponent implements OnInit {
     else if(age < 100){
       return('elderly')
     }
+    console.log(age)
     return('centenarian')
   }
 
