@@ -106,7 +106,6 @@ export class HomeComponent implements OnInit {
      for(let i = 0; i < this.logo_list.length; i ++){
       this.logo_list[i].url = this.logo_list[i].name == this.selected_age_group ? [this.logo_list[i].url.slice(0,-4),"_selected",this.logo_list[i].url.slice(-4)].join('') : this.logo_list[i].url.replace("_selected", "");
     }
-    console.log(this.logo_list)
     this.makeDictionaries();
     this.tissue_chart_options.series = Object.values(this.tissue_dict);
     this.tissue_chart_options.labels = Object.keys(this.tissue_dict);
@@ -129,11 +128,12 @@ export class HomeComponent implements OnInit {
       //Get Age information to always be displayed
       let age_group = this.getAgeGroup(age);
       temp_age_dict[age_group] = temp_age_dict[age_group] + 1;
-
+      
       if(age < this.min_age || age > this.max_age){
         continue;
       }
-
+      console.log(age)
+      console.log(Number(sample.num_cells))
       //get tissue info
       let tissue = sample.tissue.includes('blood') ? 'blood' : sample.tissue;
       tissue = this.tissue_list.includes(tissue) ? tissue : 'other';
