@@ -3,7 +3,8 @@
 
 <div class="flex-container">
    <button color="accent" class="button" (click)="getInRangeGenes()">Gene Info</button>
-   <button color="accent" class="button" (click)="getInRangeGenes()" *ngIf="this.genes.length > 0">Apply</button>
+
+   <button color="accent" class="button" (click)="subsetCorrectCellAndTissueTypes()" *ngIf="this.genes.length > 0">Apply</button>
    <dx-tag-box
       *ngIf="this.genes.length > 0"
       class="flex-child"
@@ -37,8 +38,8 @@
    ></dx-tag-box>
 </div>
 <div class="search-results" [class.searching]="loading">
-   <div *ngFor="let geneset of this.grouped_genes">
-      <app-gene-card [gene_list]="geneset" [indices]="selected_indices"></app-gene-card>
+   <div *ngFor="let gene_list of this.grouped_genes">
+      <app-gene-card [gene_list]="gene_list" [indices]="selected_indices"></app-gene-card>
    </div>
    <div *ngIf="loading" class="loading-overlay">Loading...</div>
 </div>

@@ -24,7 +24,7 @@ export type ChartOptions = {
   styleUrls: ['./gene-card.component.css']
 })
 export class GeneCardComponent implements OnInit {
-  @Input() gene_list!: DiffExp[];
+  @Input() gene_list: DiffExp[];
   @Input() indices!: Indices[];
   //@Input() en_id!: string | undefined;
   @ViewChild('child') child: MapsComponent;
@@ -43,6 +43,7 @@ export class GeneCardComponent implements OnInit {
   ngOnInit(): void {
     //sort by fixed effect size
     //this.cleanArrays();
+    console.log(this.gene_list)
     this.num_studies = this.getNumUniqueStudies()
     this.temp.push(this.gene_list[0])
     let temp_string = "00000000000" + this.gene_list[0].gene?.toString()
@@ -174,10 +175,10 @@ export class GeneCardComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('teest')
-    // Check if the 'gene_list' input has changed
     if (changes['gene_list'] && !changes['gene_list'].firstChange) {
-      this.createDisplayData(); // Call the function when 'gene_list' changes
+      // Update charts when gene_list input changes
+      this.createDisplayData();
+      console.log(this.gene_list)
     }
   }
 

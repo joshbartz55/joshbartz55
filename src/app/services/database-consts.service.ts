@@ -75,6 +75,16 @@ export class DatabaseConstsService {
     "Human", "Mouse"
   ]
 
+  DiffExpPMIDTissueDict: { [key: string]: number[] } = {
+    "Kidney": [31896769],
+    "Liver": [30348985, 35021063],
+    "Bone Narrow": [30518681],
+    "Lung": [30554520, 36108172],
+    "Pancreas": [30865899, 34450029],
+    "Brain": [31316211, 31178122],
+    "Colon": [32888429, 34428183],
+};
+
   getTissueTypes(){
     return this.tissueTypes
   }
@@ -83,6 +93,9 @@ export class DatabaseConstsService {
   }
   getSpecies(){
     return this.species
+  }
+  getDePmidTissueDict(){
+    return this.DiffExpPMIDTissueDict
   }
   constructor() { }
 }

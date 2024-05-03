@@ -121,9 +121,7 @@ export class HomeComponent implements OnInit {
     
     for(let i=0; i<this.sample_info.length; i++){
       let sample = this.sample_info[i];
-      let age = Number(sample.age.includes('fetal')? 0 : sample.age);
-
-      
+      let age = this.getAge(sample.age)
 
       //Get Age information to always be displayed
       let age_group = this.getAgeGroup(age);
@@ -132,12 +130,9 @@ export class HomeComponent implements OnInit {
       if(age < this.min_age || age > this.max_age){
         continue;
       }
-      console.log(age)
-      console.log(Number(sample.num_cells))
       //get tissue info
       let tissue = sample.tissue.includes('blood') ? 'blood' : sample.tissue;
-      tissue = this.tissue_list.includes(tissue) ? tissue : 'other';
-
+      tissue = tissue.toLowerCase()
       //get tissue info
       let sex = sample.sex
 
@@ -146,6 +141,12 @@ export class HomeComponent implements OnInit {
       temp_sex_dict[sex] = temp_sex_dict[sex] ? temp_sex_dict[sex] + 1 : 1;
       cell_count = cell_count + Number(sample.num_cells);
     }
+    console.log(temp_tissue_dict)
+    temp_tissue_dict = Object.entries(temp_tissue_dict);
+    temp_tissue_dict = temp_tissue_dict.map(([key, value]: [string, any]) => [key.charAt(0).toUpperCase() + key.slice(1), value]);
+    temp_tissue_dict.sort((a: [string, number], b: [string, number]) => b[1] - a[1]);
+    temp_tissue_dict = Object.fromEntries(temp_tissue_dict);
+
     this.tissue_dict = temp_tissue_dict;
     this.sex_dict = temp_sex_dict;
     this.age_dict = temp_age_dict;
@@ -220,6 +221,21 @@ export class HomeComponent implements OnInit {
       }
     };
     return(chart)
+  }
+
+  getAge(age:any){
+    let ret_age = -10
+    if(age.toLowerCase().includes('w')){
+      ret_age = 0
+    }
+    else if(age.includes('-')){
+      let ages = age.split('-')
+      ret_age  = (Number(ages[0]) + Number(ages[1]))/2
+    }
+    else {
+      ret_age = Number(age)
+    }
+    return(ret_age)
   }
 
   getAgeGroup(age:number){

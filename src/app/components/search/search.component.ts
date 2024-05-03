@@ -5,6 +5,7 @@ import { DatabaseConstsService } from '../../services/database-consts.service'
 import themes from 'devextreme/ui/themes';
 import { ApexNonAxisChartSeries, ApexResponsive, ApexChart, ApexLegend, ApexDataLabels, ApexPlotOptions, ApexTheme, ApexStroke, ApexAxisChartSeries, ApexXAxis, ApexYAxis, ApexGrid} from "ng-apexcharts";
 import { Console } from 'console';
+import * as JSZip from 'jszip';
 
 export type DonutChartOptions = {
   series: ApexNonAxisChartSeries;
@@ -31,6 +32,10 @@ export type BarChartOptions = {
 };
 
 
+interface DownloadData {
+  blob: Blob;
+  filename: string;
+}
 
 @Component({
   selector: 'app-search',
@@ -79,17 +84,16 @@ export class SearchComponent implements OnInit {
   constructor(private databaseConstService: DatabaseConstsService, private databaseService: DatabaseService) {
     this.checkBoxesMode = themes.current().startsWith('material') ? 'always' : 'onClick';
     this.tissue_types = databaseConstService.getTissueTypes();
-    this.cell_types = databaseConstService.getCellTypes();
-    //Temp for testing
-    this.tissue_types = databaseConstService.getTissueTypes()
-    this.cell_types = ['t_cells']
-    this.health = ['Healthy']
+    //this.species = databaseConstService.getSpecies();
+    //this.cell_types = databaseConstService.getCellTypes();
+    this.health = ['All','Healthy', 'Cancer', 'Alzheimers']
+    this.cell_types = ['All Cells','T Cells', 'B Cells', 'Macrophages', 'Endothelial Cells', 'Fibroblasts', 'Dendritic Cells']
+
     this.selected_tissues = this.tissue_types;
-    this.selected_cells = this.cell_types;
-    this.species = databaseConstService.getSpecies();
+    this.selected_cells = ['All Cells'];
     this.selected_species = ["Human"];
     this.selected_age = [0,100]
-    this.selected_health=this.health
+    this.selected_health=['All']
     this.tooltip = {
       enabled: true,
       showMode: 'always',
@@ -128,7 +132,8 @@ export class SearchComponent implements OnInit {
     if(this.selected_health.length == 0){
       this.selected_health = ["Healthy"];
     }
-    this.databaseService.getSamplesTest(this.selected_species,this.selected_tissues, this.selected_cells,this.selected_age, this.selected_health, this.pmid)
+    
+    this.databaseService.getSamplesTest(this.selected_species,this.selected_tissues, this.formatForDB(this.selected_cells),this.selected_age, this.formatForDB(this.selected_health), this.pmid)
       .subscribe({
         next: (data) => {
           this.display = data;
@@ -137,7 +142,6 @@ export class SearchComponent implements OnInit {
           this.sex_chart_options = this.makeDonutChart(this.sex_dict)
           this.age_chart_options = this.makeBarChart(this.age_dict)
           this.health_chart_options = this.makeDonutChart(this.health_dict)  
-          console.log(this.health_chart_options)        
           this.query_completed = true
         },
         error: (e) => console.error(e)
@@ -172,48 +176,74 @@ export class SearchComponent implements OnInit {
     return values.some(value => string.includes(value));
   }
   
-
-  downloadWrapper($event: any){
-    if(this.selected_download_method == this.download_options[0].name){
-      for(let i=0; i<this.selectedRowData.length; i++){
-        this.dowloadCleanData(this.selectedRowData[i].sample_id)
-      }
-    } else{
-      for(let i=0; i<this.selectedRowData.length; i++){
-        this.dowloadRawData(this.selectedRowData[i].sample_id)
-      }
+  downloadWrapper($event: any) {
+    const zip = new JSZip();
+    const downloadPromises: Promise<DownloadData>[] = [];
+    const downloadMethod = this.selected_download_method == this.download_options[0].name ? this.dowloadCleanData : this.dowloadRawData;
+    let selected_ids = []
+    for (let i = 0; i < this.selectedRowData.length; i++) {
+      const id = this.selectedRowData[i].sample_id;
+      selected_ids.push(id)
+      const downloadPromise = downloadMethod.call(this, id);
+      downloadPromises.push(downloadPromise);
     }
+    let formatted_sample_ids = selected_ids.join(',');
+  
+    // Retrieve metadata CSV string
+    const metadataPromise = this.getDownloadedMetaData(formatted_sample_ids);
+  
+    Promise.all([metadataPromise, ...downloadPromises]).then(([metadataCsv, ...downloads]) => {
+      // Add metadata file to the zip
+      zip.file('metadata.csv', metadataCsv);
+  
+      // Add downloaded files to the zip
+      downloads.forEach(({ blob, filename }) => {
+        zip.file(filename, blob);
+      });
+  
+      // Generate zip file
+      zip.generateAsync({ type: 'blob' }).then((zipBlob: Blob) => {
+        saveAs(zipBlob, 'download.zip');
+      });
+    }).catch(error => {
+      console.error('Error downloading data:', error);
+    });
   }
-  dowloadCleanData(id:number){
+dowloadCleanData(id: number): Promise<DownloadData> {
+  return new Promise((resolve, reject) => {
     this.databaseService.getCleanData(id)
-    .subscribe({
-      next: (data) => {
-        var csvData:any[] = []
-        const filename = 'Data_' + id
-        for(let i=0; i<data.length; i++){
-          csvData = csvData.concat(data[i])
+      .subscribe({
+        next: (data) => {
+          const csvData = data.flat().join('\n');
+          const filename = 'Data_' + id + '.csv';
+          const blob = new Blob([csvData], { type: 'text/csv' });
+          resolve({ blob, filename });
+        },
+        error: (e) => {
+          console.error(e);
+          reject(e);
         }
-        var csvBlobData =csvData.join('\n')
-        console.log(csvData)
-        console.log(csvBlobData)
-        const blob = new Blob([csvBlobData], { type: 'text/csv' });
-        saveAs(blob, filename);
-      },
-      error: (e) => console.error(e)
-    });
-  }
+      });
+  });
+}
 
-  dowloadRawData(id: number){
+dowloadRawData(id: number): Promise<DownloadData> {
+  return new Promise((resolve, reject) => {
     this.databaseService.getRawData(id)
-    .subscribe({
-      next: (data) => {
-        const filename = 'Data_' + id
-        const blob = new Blob([data], { type: 'application/zip' });
-        saveAs(blob, filename);
-      },
-      error: (e) => console.error(e)
-    });
-  }
+      .subscribe({
+        next: (data) => {
+          const csvData = data;
+          const filename = 'Data_' + id + '.csv';
+          const blob = new Blob([csvData], { type: 'text/csv' });
+          resolve({ blob, filename });
+        },
+        error: (e) => {
+          console.error(e);
+          reject(e);
+        }
+      });
+  });
+}
 
 
   /* NEW STUFF, QUESTIONABLE */
@@ -244,6 +274,8 @@ export class SearchComponent implements OnInit {
 
       //get tissue info
       let tissue = sample.tissue.includes('blood') ? 'blood' : sample.tissue;
+      tissue = tissue.toLowerCase()
+
       //tissue = this.selected_tissues.includes(tissue) ? tissue : 'other';
       //get sex info
       let sex = sample.sex
@@ -256,7 +288,7 @@ export class SearchComponent implements OnInit {
         if (this.containsAnyValue(disease, ['healthy', 'normal', 'NA', 'Normal'])){
           disease = 'Healthy'
         }
-        else if (this.containsAnyValue(disease, ['cancer', 'carcinoma', 'Cancer'])){
+        else if (this.containsAnyValue(disease, ['cancer', 'carcinoma', 'Cancer', 'melanoma'])){
           disease = 'Cancer'
         }
         else{
@@ -269,11 +301,18 @@ export class SearchComponent implements OnInit {
       cell_count = cell_count + Number(sample.num_cells);
       temp_health_dict[disease] = temp_health_dict[disease] ? temp_health_dict[disease] + 1 : 1;
     }
+
+    temp_tissue_dict = Object.entries(temp_tissue_dict);
+    temp_tissue_dict = temp_tissue_dict.map(([key, value]: [string, any]) => [key.charAt(0).toUpperCase() + key.slice(1), value]);
+    temp_tissue_dict.sort((a: [string, number], b: [string, number]) => b[1] - a[1]);
+    temp_tissue_dict = Object.fromEntries(temp_tissue_dict);
+
     this.tissue_dict = temp_tissue_dict;
     this.sex_dict = temp_sex_dict;
     this.age_dict = temp_age_dict;
     this.health_dict = temp_health_dict;
     this.cell_total = cell_count;
+    console.log(this.tissue_dict)
   }
   makeDonutChart(input_dict: any){
     let chart: Partial<DonutChartOptions> = {
@@ -403,8 +442,6 @@ export class SearchComponent implements OnInit {
           fontWeight: 600,
           colors:[
             function ({ w, dataPointIndex }:any) {
-              console.log(dataPointIndex)
-              console.log(w.config.series[0].data[dataPointIndex])
               if (w.config.series[0].data[dataPointIndex].y > 0) {
                 return "white";
               } else {
@@ -472,7 +509,6 @@ export class SearchComponent implements OnInit {
     else if(age < 100){
       return('elderly')
     }
-    console.log(age)
     return('centenarian')
   }
 
@@ -492,4 +528,38 @@ export class SearchComponent implements OnInit {
     }
   }
 
+  getDownloadedMetaData(formatted_sample_ids: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      this.databaseService.getDownloadedMetaData(formatted_sample_ids)
+        .subscribe({
+          next: (data) => {
+            const csv = this.convertToCSV(data);
+            resolve(csv);
+          },
+          error: (e) => {
+            console.error(e);
+            reject(e);
+          }
+        });
+    });
+  }
+  
+  convertToCSV(data: any[]) {
+    const header = Object.keys(data[0]).join(',') + '\n';
+    const rows = data.map(obj => {
+      return Object.values(obj).map(value => {
+        // If the value contains a comma or double quote, enclose it in double quotes and escape any existing double quotes
+        if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
+          return '"' + value.replace(/"/g, '""') + '"';
+        }
+        return value;
+      }).join(',');
+    });
+    return header + rows.join('\n');
+  }
+
+  formatForDB(selection: string[]){
+    let mod_selection = selection.map(value => value.toLowerCase().replace(/\s+/g, '_'));
+    return(mod_selection)
+  }
 }

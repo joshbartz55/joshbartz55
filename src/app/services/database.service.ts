@@ -10,10 +10,10 @@ import { Indices } from '../models/indices.model';
 import { Image } from '../models/image.model';
 
 //Dev Base URL
-//const baseUrl = 'http://localhost:80/api/';
+const baseUrl = 'http://localhost:80/api/';
 
 //Prod Base URL
-const baseUrl = 'http://160.94.105.82:3304/api/';
+//const baseUrl = 'http://160.94.105.82:3304/api/';
 
 //query paths
 const metaUrl = baseUrl.concat('metadata'.toString());
@@ -47,11 +47,16 @@ export class DatabaseService {
     return this.http.get<Sample[]>(sampleUrl);
   }
 
+  getDownloadedMetaData(sample_ids: string): Observable<any[]> {
+    return this.http.get<any[]>(`${sampleUrl}/${'downloadedMetadata'}/${sample_ids}`);
+  }
+
   getSampleInfoForHomepage(): Observable<any[]> {
     return this.http.get<any[]>(`${sampleUrl}/${'homeinfo'}`);
   }
 
   getSamplesTest(species: any, tissues: any, cell_types:any, age:any, health:any, pmid:any): Observable<Sample[]> {
+    console.log(`${sampleUrl}/${species}/${tissues}/${cell_types}/${age}/${health}/${pmid}`)
     return this.http.get<Sample[]>(`${sampleUrl}/${species}/${tissues}/${cell_types}/${age}/${health}/${pmid}`);
   }
 
