@@ -10,10 +10,10 @@ import { Indices } from '../models/indices.model';
 import { Image } from '../models/image.model';
 
 //Dev Base URL
-const baseUrl = 'http://localhost:80/api/';
+//const baseUrl = 'http://localhost:80/api/';
 
 //Prod Base URL
-//const baseUrl = 'http://160.94.105.82:3304/api/';
+const baseUrl = 'http://160.94.105.82:3304/api/';
 
 //query paths
 const metaUrl = baseUrl.concat('metadata'.toString());
