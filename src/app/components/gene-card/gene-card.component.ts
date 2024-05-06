@@ -17,6 +17,7 @@ export type ChartOptions = {
    tooltip: ApexTooltip;
    markers: ApexMarkers;
    annotations: ApexAnnotations;
+   colors?: string[]; // Add colors property
  };
 @Component({
   selector: 'app-gene-card',
@@ -37,6 +38,12 @@ export class GeneCardComponent implements OnInit {
   temp: DiffExp[] = [];
   num_studies: Number;
   en_id: string;
+  sig_up_color: string = '#FF5733'
+  sli_up_color: string = '#FFC300'
+  no_change_color: string = '#4CAF50'
+  sli_dn_color: string = '#00BCD4'
+  sig_dn_color: string = '#9C27B0'
+
   model_selected = false;
   constructor() {}
 
@@ -67,9 +74,15 @@ export class GeneCardComponent implements OnInit {
           enabled: true
         }
       },
+      colors: [this.sig_dn_color, this.sli_dn_color, this.no_change_color, this.sli_up_color, this.sig_up_color],
       plotOptions: {
         bar: {
-          horizontal: true
+          horizontal: true,
+          // colors: {
+          //   backgroundBarColors: ['#FF5733', '#FFC300', '#4CAF50', '#00BCD4', '#9C27B0'], // Specify colors for each classification
+          //   backgroundBarOpacity: 1,
+          //   backgroundBarRadius: 0,
+          // },
         }
       },
       xaxis: {
@@ -136,16 +149,20 @@ export class GeneCardComponent implements OnInit {
           }
         },
         //type: "numeric",
-        tickAmount: 10,
-          min: -10,
-          max: 10
+        //tickAmount: 10,
+        //min: -2,
+        //max: 2
       },
       markers:{
         size: 10
       },
       yaxis:{
-        min:0,
-        max:10
+        title: {
+          text: "-10Log(P-Value)",
+          style:{
+            fontSize:'24px'
+          }
+        }
       },
       fill: {
         type: "pattern",
@@ -188,18 +205,24 @@ export class GeneCardComponent implements OnInit {
     let cluster_number = this.gene_list.length;
     let min_lfc = Number.POSITIVE_INFINITY
     let max_lfc = Number.NEGATIVE_INFINITY
+    let max_p_val = Number.NEGATIVE_INFINITY
     for(let i=0; i<cluster_number; i++){
       let gene = this.gene_list[i]
       let p_value = -Math.log10(gene.p_value!)
       meta_series_info = this.updateMetaSeriesInfo(meta_series_info, Number(gene.lfc))
-      let fill_color = p_value! >= 1.30103 ? 'blue' : 'red'; 
+      let fill_color = this.getFillColor(p_value, Number(gene.lfc))
       let formatted_data = {x: Number(gene.lfc), y: p_value, fillColor: fill_color}
       model_data.push(formatted_data)
       min_lfc = gene.lfc! < min_lfc ? gene.lfc! : min_lfc;
       max_lfc = gene.lfc! > max_lfc ? gene.lfc! : max_lfc;
+      max_p_val = p_value > max_p_val ? p_value : max_p_val;
     }
-    min_lfc = min_lfc - 1
-    max_lfc = max_lfc + 1
+    min_lfc = Math.floor(min_lfc - 1)
+    max_lfc = Math.ceil(max_lfc + 1)
+    max_p_val = Math.ceil(max_p_val+1)
+    let num_ticks = max_lfc - min_lfc + 1
+    console.log(num_ticks)
+
     //Setup MetaChart
     this.meta_chart_options.chart!.width =  cluster_number > 20? '100%' : Math.trunc(cluster_number * 5).toString()+'%'
     this.meta_chart_options.series = [
@@ -221,6 +244,34 @@ export class GeneCardComponent implements OnInit {
     ]
     //Setup ModelChart
     this.model_chart_options.series =[{data: model_data}]
+    this.model_chart_options.xaxis = {
+      title: {
+        text: "Fixed Effect (Log2 Fold Change)",
+        offsetY: 100,
+        style:{
+          fontSize:'24px'
+        }
+      },
+      tooltip:{
+        formatter: function(val, opts){
+          return val.toString()
+        }
+      },
+      //type: "numeric",
+      tickAmount: num_ticks,
+      min: min_lfc,
+      max: max_lfc
+    }
+    this.model_chart_options.yaxis = {
+      title: {
+        text: "-10Log(P-Value)",
+        style:{
+          fontSize:'24px'
+        }
+      },
+      min:0,
+      max:max_p_val
+    }
     //this.model_chart_options.title = {text: this.gene_list[0].gene!.toString(),align: "center"}
     //this.model_chart_options.xaxis = {min: min_lfc, max: max_lfc}
     //Set Heights Model Graph
@@ -348,6 +399,24 @@ export class GeneCardComponent implements OnInit {
     return(set.size)
   }
 
+  getFillColor(p_val: number, lfc: number){
+    if(p_val < 1.30103){
+      return('black')
+    }
+    if(lfc < 1){
+      return(this.sig_dn_color)
+    }
+    if(lfc < 0.25){
+      return(this.sli_dn_color)
+    }
+    if(lfc > 1){
+      return(this.sig_up_color)
+    }
+    if(lfc > 1){
+      return(this.sli_up_color)
+    }
+    return(this.no_change_color)
+  }
   // cleanArrays(){
   //   let ordered_ids = sortIds(this.gene.fixed_effect);
   //   let num_values = this.gene.fixed_effect!.length;
