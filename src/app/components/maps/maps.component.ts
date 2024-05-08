@@ -74,8 +74,9 @@ export class MapsComponent implements OnInit {
       this.selected_info.g_id
       ).subscribe({
       next: (data) => {
-        this.ages = data[0].age.split(',')
-        this.exp = data[0].exp.split(',')
+        this.ages = data[0].age.replace('"','').split(',')
+        this.exp = data[0].exp.replace('"','').split(',')
+        console.log(this.exp[0])
         this.prepGraphData()
         this.makeLinRegGraph()
      },

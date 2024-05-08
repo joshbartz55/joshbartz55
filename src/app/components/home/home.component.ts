@@ -121,6 +121,9 @@ export class HomeComponent implements OnInit {
     
     for(let i=0; i<this.sample_info.length; i++){
       let sample = this.sample_info[i];
+      if(isNaN(this.getAge(sample.age))){
+        console.log(sample)
+      }
       let age = this.getAge(sample.age)
 
       //Get Age information to always be displayed
@@ -130,6 +133,7 @@ export class HomeComponent implements OnInit {
       if(age < this.min_age || age > this.max_age){
         continue;
       }
+
       //get tissue info
       let tissue = sample.tissue.includes('blood') ? 'blood' : sample.tissue;
       tissue = tissue.toLowerCase()
@@ -231,6 +235,9 @@ export class HomeComponent implements OnInit {
     else if(age.includes('-')){
       let ages = age.split('-')
       ret_age  = (Number(ages[0]) + Number(ages[1]))/2
+    }
+    else if(age.includes('+')){
+      ret_age  = Number(age.replace("+",""))
     }
     else {
       ret_age = Number(age)

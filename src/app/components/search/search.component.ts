@@ -209,24 +209,25 @@ export class SearchComponent implements OnInit {
       console.error('Error downloading data:', error);
     });
   }
-dowloadCleanData(id: number): Promise<DownloadData> {
-  return new Promise((resolve, reject) => {
-    this.databaseService.getCleanData(id)
-      .subscribe({
-        next: (data) => {
-          const csvData = data.flat().join('\n');
-          const filename = 'Data_' + id + '.csv';
-          const blob = new Blob([csvData], { type: 'text/csv' });
-          resolve({ blob, filename });
-        },
-        error: (e) => {
-          console.error(e);
-          reject(e);
-        }
-      });
-  });
-}
 
+  dowloadCleanData(id: number): Promise<DownloadData> {
+    return new Promise((resolve, reject) => {
+      this.databaseService.getCleanData(id)
+        .subscribe({
+          next: (data) => {
+            const csvData = data.csvData; // Access the CSV data from the JSON response
+            const filename = 'Data_' + id + '.csv';
+            const blob = new Blob([csvData], { type: 'text/csv' });
+            resolve({ blob, filename });
+          },
+          error: (e) => {
+            console.error(e);
+            reject(e);
+          }
+        });
+    });
+  }
+  
 dowloadRawData(id: number): Promise<DownloadData> {
   return new Promise((resolve, reject) => {
     this.databaseService.getRawData(id)

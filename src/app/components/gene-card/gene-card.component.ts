@@ -220,8 +220,7 @@ export class GeneCardComponent implements OnInit {
     min_lfc = Math.floor(min_lfc - 1)
     max_lfc = Math.ceil(max_lfc + 1)
     max_p_val = Math.ceil(max_p_val+1)
-    let num_ticks = max_lfc - min_lfc + 1
-    console.log(num_ticks)
+    let num_ticks = max_lfc - min_lfc
 
     //Setup MetaChart
     this.meta_chart_options.chart!.width =  cluster_number > 20? '100%' : Math.trunc(cluster_number * 5).toString()+'%'
@@ -270,7 +269,13 @@ export class GeneCardComponent implements OnInit {
         }
       },
       min:0,
-      max:max_p_val
+      max:max_p_val,
+      labels: {
+        formatter: function(val) {
+          // Round the y-axis label to an integer
+          return Math.round(val).toString();
+        }
+      }
     }
     //this.model_chart_options.title = {text: this.gene_list[0].gene!.toString(),align: "center"}
     //this.model_chart_options.xaxis = {min: min_lfc, max: max_lfc}
@@ -403,16 +408,16 @@ export class GeneCardComponent implements OnInit {
     if(p_val < 1.30103){
       return('black')
     }
-    if(lfc < 1){
+    if(lfc < -1){
       return(this.sig_dn_color)
     }
-    if(lfc < 0.25){
+    if(lfc < -0.25){
       return(this.sli_dn_color)
     }
     if(lfc > 1){
       return(this.sig_up_color)
     }
-    if(lfc > 1){
+    if(lfc > 0.25){
       return(this.sli_up_color)
     }
     return(this.no_change_color)
