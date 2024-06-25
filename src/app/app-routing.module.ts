@@ -12,7 +12,7 @@ const routes: Routes = [
   {path: 'igv', component: IgvComponent},
   {path: 'maps', component: MapsComponent},
   {path: 'documentation', component: DocumentationComponent},
-  { path: '**', redirectTo: '/', pathMatch: 'full' }
+  { path: '**', redirectTo: '/'}
 ];
 
 @NgModule({
