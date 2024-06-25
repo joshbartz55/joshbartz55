@@ -109,21 +109,38 @@ export class DatabaseService {
 
   staticDownload(sample_ids: number[]): void {
     const urls = sample_ids.map(id => `http://160.94.105.82:3304/static/Sample_${id}.tar.gz`);
-
     const fileRequests = urls.map(url => this.http.get(url, { responseType: 'blob' }).toPromise());
 
-    Promise.all(fileRequests)
-      .then((responses: (Blob | undefined)[]) => {  // Explicit type annotation
-        const zip = new JSZip();
+    // Create a promise for the metadata request
+    const metadataRequest = this.http.get<any[]>(`${sampleUrl}/downloadedMetadata/${sample_ids}`).toPromise();
 
-        responses.forEach((response, index) => {
-          if (response) {
+    // Combine the file requests and the metadata request into a single promise array
+    const allRequests = [...fileRequests, metadataRequest];
+
+    Promise.all(allRequests)
+      .then((responses: (Blob | undefined | any[])[]) => {  // Explicit type annotation
+        const zip = new JSZip();
+        console.log('jhe')
+        // Handle the file responses
+        responses.slice(0, sample_ids.length).forEach((response, index) => {
+          if (response instanceof Blob) {
             const fileName = `Sample_${sample_ids[index]}.tar.gz`;
             zip.file(fileName, response);
           } else {
             console.error(`Failed to download file at index ${index}`);
           }
         });
+
+        // Handle the metadata response (the last response in the array)
+        const metadata = responses[sample_ids.length];
+        console.log(metadata)
+        if (metadata) {
+          const metadataFileName = 'metadata.json';
+          const metadataBlob = new Blob([JSON.stringify(metadata)], { type: 'application/json' });
+          zip.file(metadataFileName, metadataBlob);
+        } else {
+          console.error('Failed to download metadata');
+        }
 
         return zip.generateAsync({ type: 'blob' });
       })
@@ -140,6 +157,7 @@ export class DatabaseService {
       .catch(error => {
         console.error('Error downloading files or creating zip:', error);
       });
-  }
+}
+
   
 }
