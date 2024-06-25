@@ -4,6 +4,13 @@
   <meta charset="utf-8">
   <title>Chewie</title>
   <base href="/">
+  <script>
+        // Check if the current URL starts with "https://"
+        if (window.location.href.startsWith('https://')) {
+        // Redirect to the same URL but with "http://" instead of "https://"
+        window.location.href = window.location.href.replace(/^https:\/\//i, 'http://');
+    }
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="preconnect" href="https://fonts.gstatic.com">
