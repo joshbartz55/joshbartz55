@@ -138,17 +138,29 @@
   height: 80%;
   display: flex;
   text-align: center; /* Center text horizontally */
-  padding-top: 25%; /* Add padding from the top */
+  padding-top: 12%; /* Add padding from the top */
 }
 
-.test{
-  height: 20%;
+.scaliwag-title{
+  height: 10%;
   flex: 0; /* Each takes up equal space */
   display: flex;
   justify-content: center; /* Center content horizontally */
   align-items: center; /* Center content vertically */
   font-size: 80px;
   font-family: 'RobotoCondensed-Bold';
+  padding-top: 10%; /* Add padding from the top */
+}
+
+.scaliwag-subtitle{
+  height: 10%;
+  flex: 0; /* Each takes up equal space */
+  display: flex;
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
+  font-size: 17px;
+  font-family: 'RobotoCondensed';
+  padding-top: 1%; /* Add padding from the top */
 }
 
 .title{
