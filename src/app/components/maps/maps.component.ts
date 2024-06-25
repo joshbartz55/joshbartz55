@@ -24,7 +24,7 @@ export type ChartOptions = {
   styleUrls: ['./maps.component.css']
 })
 export class MapsComponent implements OnInit {
-  @Input() selected_info!: {pmid:number, cell_type:string, gene: string, cell_type2: string, cell_type3: string, slope: number, intercept: number, g_id: number};
+  @Input() selected_info!: {pmid:number, cell_type:string, gene: string, cell_type2: string, cell_type3: string, slope: number, pvalue:number, intercept: number, lfc:number, g_id: number};
   @Input() en_id!: string | undefined;
   image: Image[];
   tsne: any;
@@ -37,12 +37,13 @@ export class MapsComponent implements OnInit {
   exp: number[];
   points_data: any[];
   line_data: any[];
+  decade_change: number;
 
   public linReg_chart_options: Partial<ChartOptions>;
 
 
-  maps = [{text: "umap"}, {text: "tsne"}, {text: "Linear Regression"}, {text: "Meta Info"}];
-  display = 'umap';
+  maps = [{text: "UMAP"}, {text: "TSNE"}, {text: "Linear Regression"}, {text: "Meta Info"}];
+  display = 'UMAP';
 
   constructor(private databaseService: DatabaseService, private sanitizer: DomSanitizer) {}
 
@@ -53,10 +54,9 @@ export class MapsComponent implements OnInit {
 
   getClusterImages(){
     //this.databaseService.getImage(this.selected_info.pmid, 1).subscribe({
-    this.databaseService.getImage(30348985, 1).subscribe({
+    this.databaseService.getImage(this.selected_info.pmid, 1).subscribe({
       next: (data) => {
         this.image = data;
-        this.image[0].TSNE = null
         this.umap = this.decodeImage(this.image[0].UMAP!)
         if(this.image[0].TSNE! != null){
           this.tsne = this.decodeImage(this.image[0].TSNE!)
@@ -105,7 +105,7 @@ export class MapsComponent implements OnInit {
   makeLinRegGraph(){
     this.linReg_chart_options = {
       series: [{
-        name: 'Cells',
+        name: 'Cell',
         type: 'scatter',
         data: this.points_data
       },{
@@ -128,13 +128,21 @@ export class MapsComponent implements OnInit {
         intersect: true,
       },
       xaxis:{
-        tickAmount: 10
+        tickAmount: 10,
+        title: {
+          text: 'Age (Years)',
+          offsetY: 80
+        }
       },
       yaxis: {
-        labels: {
-          formatter: function(value) {
-            return (value.toFixed(1)).toString(); // Round the tick value to the nearest whole number
-          }
+        // labels: {
+        //   formatter: function(value) {
+        //     return (value.toFixed(1)).toString(); // Round the tick value to the nearest whole number
+        //   }
+        // },
+        title: {
+          text: 'Normalized Expression',
+          offsetX: 0
         }
       }
     }
@@ -162,8 +170,10 @@ export class MapsComponent implements OnInit {
   ngOnChanges(changes: SimpleChanges){
     this.selected_info = changes['selected_info'].currentValue;
     this.formatOtherCellTypes()
+    this.calculateDecadeChange()
     const pubmed = ncbi.pubmed;
     pubmed.summary(this.selected_info.pmid).then((results:any) => {
+      console.log(results)
       this.title = results.title
       this.author = results.authors.split(',')[0].replace(' ',', ')
       this.year = results.pubDate.split('/')[0]
@@ -180,6 +190,10 @@ export class MapsComponent implements OnInit {
     if(this.selected_info.cell_type2 == '' && this.selected_info.cell_type3 == ''){
       this.selected_info.cell_type2 = 'None'
     }
+  }
+
+  calculateDecadeChange(){
+    this.decade_change = Number((this.selected_info.lfc/65 * 1000).toFixed(2))
   }
 
 }

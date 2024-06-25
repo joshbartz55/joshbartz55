@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { User } from '../models/user.model';
 import { Metadata } from '../models/metadata.model';
 import { Sample } from '../models/sample.model';
 import { Positions } from '../models/positions.model';
 import { DiffExp } from '../models/diffExp.model';
 import { Indices } from '../models/indices.model';
 import { Image } from '../models/image.model';
+import JSZip from 'jszip';
+
 
 //Dev Base URL
 //const baseUrl = 'http://localhost:80/api/';
@@ -26,6 +27,8 @@ const linRegUrl = baseUrl.concat('linearRegression'.toString());
 const cleanDataUrl =  baseUrl.concat('cleanData'.toString());
 const rawDataUrl =  baseUrl.concat('sample/rawData'.toString());
 const linRegDataUrl =  baseUrl.concat('linRegData'.toString());
+const staticUrl =  baseUrl.concat('static'.toString());
+const tarSizeUrl =  baseUrl.concat('tarSize'.toString());
 
 
 @Injectable({
@@ -56,7 +59,6 @@ export class DatabaseService {
   }
 
   getSamplesTest(species: any, tissues: any, cell_types:any, age:any, health:any, pmid:any): Observable<Sample[]> {
-    console.log(`${sampleUrl}/${species}/${tissues}/${cell_types}/${age}/${health}/${pmid}`)
     return this.http.get<Sample[]>(`${sampleUrl}/${species}/${tissues}/${cell_types}/${age}/${health}/${pmid}`);
   }
 
@@ -89,10 +91,55 @@ export class DatabaseService {
   }
 
   getCleanData(table_num:number): Observable<any> {
-    return this.http.get<any[]>(`${cleanDataUrl}/${table_num}`);
+    return this.http.get<any[]>(`${cleanDataUrl}/${1}/${table_num}`);
   }
 
   getRawData(sample_num:number): Observable<ArrayBuffer> {
     return this.http.get(`${rawDataUrl}/${sample_num}`,{responseType: 'arraybuffer'});
   }
+
+  curlTest(table_num:number): Observable<any> {
+    console.log('here')
+    return this.http.get<any[]>(`${cleanDataUrl}/${'curl'}/${'1'}`);
+  }
+
+  getTarSize(sample_ids:number[]): Observable<any> {
+    return this.http.get<any[]>(`${tarSizeUrl}/${sample_ids}`);
+  }
+
+  staticDownload(sample_ids: number[]): void {
+    const urls = sample_ids.map(id => `http://160.94.105.82:3304/static/Sample_${id}.tar.gz`);
+
+    const fileRequests = urls.map(url => this.http.get(url, { responseType: 'blob' }).toPromise());
+
+    Promise.all(fileRequests)
+      .then((responses: (Blob | undefined)[]) => {  // Explicit type annotation
+        const zip = new JSZip();
+
+        responses.forEach((response, index) => {
+          if (response) {
+            const fileName = `Sample_${sample_ids[index]}.tar.gz`;
+            zip.file(fileName, response);
+          } else {
+            console.error(`Failed to download file at index ${index}`);
+          }
+        });
+
+        return zip.generateAsync({ type: 'blob' });
+      })
+      .then((zipFile) => {
+        if (zipFile) {
+          const downloadLink = document.createElement('a');
+          downloadLink.href = URL.createObjectURL(zipFile);
+          downloadLink.download = 'Samples.zip';
+          downloadLink.click();
+        } else {
+          console.error('Failed to generate zip file');
+        }
+      })
+      .catch(error => {
+        console.error('Error downloading files or creating zip:', error);
+      });
+  }
+  
 }

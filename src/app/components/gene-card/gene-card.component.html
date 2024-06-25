@@ -10,7 +10,7 @@
   >
     <div *dxTemplate="let gene of 'title'" class="flex-container">
       <h1 class="gene-title">
-         {{gene.gene}}
+         {{en_id}}
       </h1>
       <apx-chart
         [series]="meta_chart_options.series!"
@@ -22,6 +22,7 @@
       </apx-chart>
       <h2 class="gene-info">
         Clusters Detected: {{gene_list.length}}
+        <br>
         Studies Detected: {{num_studies}}
       </h2>
     </div>

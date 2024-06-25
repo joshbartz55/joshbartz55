@@ -73,3 +73,27 @@
     margin-left: 80px;
     margin-right: 5px;
 }
+.downloadInfo{
+    font-size: 20px;
+    margin: 3px;
+    text-align: center;
+    color: #8E8D8A;
+}
+
+/* Adjust the size of the button group */
+.large-button-group {
+    height: 100%;
+    font-size: 50px;
+}
+
+/* Center the button group horizontally and vertically */
+.button-group-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px; /* Adjust the height of the container as needed */
+}
+/* Custom CSS with increased specificity and !important */
+::ng-deep .button-group-container .dx-button-content .dx-button-text {
+    font-size: 25px !important;
+}

@@ -5,9 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class DatabaseConstsService {
   tissueTypes: string[] = [   
-    "Adipose","Adrenal Gland","Artery","Ascending Colon","Bladder","Bone Marrow","Brain","Calavaria","Cerebellum","Cervix","Chord Blood Cd34+","Chord Blood","Dermis","Duodenum","Epityphlon",
-    "Esophagus","Eyes","Fallopian Tube","Female Gonad","Gall Bladder","Heart","Human Bone Marrow","Ileum","Intestine","Jejunum","Kidney","Liver","Lung","Muscle","Omentum","Pancreas","Panreas","Peripheral Blood","Placenta",
-    "Pleura","Prostate","Rectum","Rib","Sigmoid Colon","Skin","Spinal Cord","Spleen","Stomach","Temporal Lobel","Thymus","Thyroid","Trachea","Transverse Colon","Ureter","Uterus",
+    "Kidney", "Bone Marrow", "Dermis", "Pancreas", "Placenta", "Liver", "Adipose", "Adrenal Gland", "Artery", "Colon", "Bladder", "Cerebellum", "Cervix", "Duodenum", "Epityphlon", "Esophagus", "Fallopian Tube", "Heart", "Ileum", "Jejunum", "Lung", "Muscle", "Omentum", "Blood", "Pleura", "Prostate", "Rectum", "Spleen", "Stomach", "Temporal Lobel", "Thyroid", "Trachea", "Ureter", "Uterus", "Brain", "Calavaria", "Eyes", "Female Gonad", "Intestine", "Male Gonad", "Rib", "Spinal Cord", "Thymus", "Olfactory Cleft", "Metastatic Tumor", "Common Bile Duct", "Lymph Node", "Airway", "Immune System", "Abdomen", "Parapharyngeal Space", "Infratemporal Fossa", "Quadriceps Femoris", "Tibialis", "Chest", "Bronchi", "Intervertebral Disks", "Ovary", "Vaginal Wall", "Urethra", "Breast", "Palatine Tonsil", "Blood Vessel", "Mouth", "Testis"
   ]
   cellTypes: string[] = [
     "Adipose progenitor cell" ,"Adipose-derived stem cell" ,"Adipose-derived stromal cell" ,"Adipose multilineage-differentiating stress-enduring cell" ,"Beige adipogenic precursor cell" ,

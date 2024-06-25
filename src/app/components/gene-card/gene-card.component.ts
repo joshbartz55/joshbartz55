@@ -3,8 +3,7 @@ import {ApexAxisChartSeries,ApexChart,ApexPlotOptions,ApexXAxis, ApexTitleSubtit
 import { DiffExp } from 'src/app/models/diffExp.model';
 import { Indices } from 'src/app/models/indices.model';
 import { MapsComponent } from '../maps/maps.component';
-import * as sortIds from 'sort-ids'
-import { max } from 'rxjs';
+import { GeneConversionService } from '../../services/name-converter.service';
 
 export type ChartOptions = {
    series: ApexAxisChartSeries;
@@ -45,16 +44,28 @@ export class GeneCardComponent implements OnInit {
   sig_dn_color: string = '#9C27B0'
 
   model_selected = false;
-  constructor() {}
+  constructor(private geneConversionService: GeneConversionService) {}
 
   ngOnInit(): void {
     //sort by fixed effect size
     //this.cleanArrays();
-    console.log(this.gene_list)
     this.num_studies = this.getNumUniqueStudies()
     this.temp.push(this.gene_list[0])
     let temp_string = "00000000000" + this.gene_list[0].gene?.toString()
     this.en_id = "ENSG" + temp_string.slice(-11)
+    
+    this.geneConversionService.convertEnsembleToGene(this.en_id).then((result: string) => {
+      this.en_id = result==""? this.en_id: result;
+      if(this.en_id.length<15){
+        this.en_id += ' '.repeat(15-this.en_id.length)
+      }
+      console.log(this.en_id)
+      console.log(this.en_id.length)
+    }).catch((error: any) => {
+      console.error('Error converting ensemble ID to gene:', error);
+    });
+
+
     this.meta_chart_options = {
       series: [
         {  
@@ -132,7 +143,9 @@ export class GeneCardComponent implements OnInit {
               cell_type2: slected_gene.cell_type2,
               cell_type3: slected_gene.cell_type3,
               slope: slected_gene.slope,
+              pvalue: slected_gene.p_value,
               intercept: slected_gene.inter,
+              lfc: slected_gene.lfc,
               g_id: slected_gene.plotting_id
             };
             this.model_selected = true;
@@ -185,6 +198,13 @@ export class GeneCardComponent implements OnInit {
             strokeDashArray:10,
             borderColor: 'black',
           }
+        ],
+        xaxis: [
+          {
+            x: 0,
+            strokeDashArray:7,
+            borderColor: 'grey',
+          }
         ]
       }
     };
@@ -209,7 +229,7 @@ export class GeneCardComponent implements OnInit {
     for(let i=0; i<cluster_number; i++){
       let gene = this.gene_list[i]
       let p_value = -Math.log10(gene.p_value!)
-      meta_series_info = this.updateMetaSeriesInfo(meta_series_info, Number(gene.lfc))
+      meta_series_info = this.updateMetaSeriesInfo(meta_series_info, Number(gene.lfc), p_value)
       let fill_color = this.getFillColor(p_value, Number(gene.lfc))
       let formatted_data = {x: Number(gene.lfc), y: p_value, fillColor: fill_color}
       model_data.push(formatted_data)
@@ -365,24 +385,26 @@ export class GeneCardComponent implements OnInit {
   //   this.model_chart_options.chart!.height = height
   //   }
   // }
-  updateMetaSeriesInfo(info: number[], lfc: number){
+  updateMetaSeriesInfo(info: number[], lfc: number, pval:number){
     let i = -1
-    if(lfc <= -1){
+    if(pval < 1.30103){
+      return(info)
+    }
+    else if(lfc <= -1){
       i = 0
     }
-    else if(lfc>-1 && lfc< -0.5){
+    else if(lfc>-1 && lfc< -0.25){
       i = 1
     }
-    else if(lfc>=-0.5 && lfc<= 0.5){
+    else if(lfc>=-0.25 && lfc<= 0.25){
       i = 2
     }
-    else if(lfc>0.5 && lfc< 1){
+    else if(lfc>0.25 && lfc< 1){
       i = 3
     }
     else{
       i = 4
     }
-
     info[i] = info[i]+1;
     return(info)
   }

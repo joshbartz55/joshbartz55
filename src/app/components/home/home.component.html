@@ -19,14 +19,21 @@
       [stroke]="tissue_chart_options.stroke!"
     ></apx-chart>
   </div>
-  <div class="cell-total">
-    <p>
-      <a class="title">Total Cells</a>
-      <br>  
-      <a class="value">{{cell_total}}</a>
-    </p>
+  <div class="middle-divs">
+    <div class = 'test'>SCALIWAG</div>
+    <div class="cell-total">
+       <p class = 'center'>
+        <a class="title">Total Cells</a>
+        <br>  
+        <a class="value">{{cell_total}}</a>
+        <br> 
+        <a class="subtitle">{{prettify(selected_age_group)}}</a>
+        <br>
+        <br>
+        <a class="hint" *ngIf="selected_age_group == 'all ages'">Select An Age Below to Explore in More Detail</a>
+      </p>
+    </div>
   </div>
-
   <div id="sex_chart" *ngIf="charts_ready" class="pie-chart2">
     <apx-chart
       [series]="sex_chart_options.series!"

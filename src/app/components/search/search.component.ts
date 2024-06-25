@@ -6,6 +6,7 @@ import themes from 'devextreme/ui/themes';
 import { ApexNonAxisChartSeries, ApexResponsive, ApexChart, ApexLegend, ApexDataLabels, ApexPlotOptions, ApexTheme, ApexStroke, ApexAxisChartSeries, ApexXAxis, ApexYAxis, ApexGrid} from "ng-apexcharts";
 import { Console } from 'console';
 import * as JSZip from 'jszip';
+import { type } from 'os';
 
 export type DonutChartOptions = {
   series: ApexNonAxisChartSeries;
@@ -74,6 +75,7 @@ export class SearchComponent implements OnInit {
   display: any[];
   selectedRowData: any[] = [];
   selectedRowKeys: any[] = [];
+  downloadSize: string;
   query_completed = false;
 
   maps = [{text: "Tissue"}, {text: "Sex"}, {text: "Age"}, {text: "Health"}];
@@ -81,18 +83,19 @@ export class SearchComponent implements OnInit {
 
   download_options: { name: string; }[] = []
   selected_download_method: string;
+
   constructor(private databaseConstService: DatabaseConstsService, private databaseService: DatabaseService) {
     this.checkBoxesMode = themes.current().startsWith('material') ? 'always' : 'onClick';
     this.tissue_types = databaseConstService.getTissueTypes();
     //this.species = databaseConstService.getSpecies();
     //this.cell_types = databaseConstService.getCellTypes();
     this.health = ['All','Healthy', 'Cancer', 'Alzheimers']
-    this.cell_types = ['All Cells','T Cells', 'B Cells', 'Macrophages', 'Endothelial Cells', 'Fibroblasts', 'Dendritic Cells']
+    this.cell_types = ['All Cells','T Cells', 'B Cells', 'Macrophages', 'Endothelial Cells', 'Fibroblasts', 'Dendritic Cells', 'Neurons']
 
     this.selected_tissues = this.tissue_types;
     this.selected_cells = ['All Cells'];
     this.selected_species = ["Human"];
-    this.selected_age = [0,100]
+    this.selected_age = [0,110]
     this.selected_health=['All']
     this.tooltip = {
       enabled: true,
@@ -100,7 +103,7 @@ export class SearchComponent implements OnInit {
       position: 'bottom',
     };
 
-    this.download_options = [{name:'Download Clean Data'},{name:'Download Raw Data'}]
+    this.download_options = [{name:'Download Standardized Data'},{name:'Download Unformatted Data'}]
     this.selected_download_method = this.download_options[0].name
 
   }
@@ -108,15 +111,18 @@ export class SearchComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  runQuery() {
-    this.databaseService.getAllDisplaySamples()
-      .subscribe({
-        next: (data) => {
-          this.display = data;
-          this.query_completed = true
-        },
-        error: (e) => console.error(e)
-      });
+  cleanDisplay(){
+    console.log(typeof(this.display))
+    console.log(this.display[1])
+    this.display.forEach(obj => {
+      if(obj.disease_status.length > 0) {
+        if(obj.disease_status.toLowerCase() == 'null'){
+          obj.disease_status = 'Healthy'
+        }
+        obj.disease_status = obj.disease_status.charAt(0).toUpperCase() + obj.disease_status.slice(1);
+      }
+      obj.tissue = obj.tissue.charAt(0).toUpperCase() + obj.tissue.slice(1);
+  });
   }
 
   samplesTest() {
@@ -137,6 +143,7 @@ export class SearchComponent implements OnInit {
       .subscribe({
         next: (data) => {
           this.display = data;
+          this,this.cleanDisplay()
           this.makeDictionaries()
           this.tissue_chart_options = this.makeDonutChart(this.tissue_dict)
           this.sex_chart_options = this.makeDonutChart(this.sex_dict)
@@ -170,62 +177,30 @@ export class SearchComponent implements OnInit {
   onSelectionChanged(event: any) {
     this.selectedRowKeys = event.selectedRowKeys;
     this.selectedRowData = event.selectedRowsData;
+    let selected_ids = this.selectedRowData.map(row => row.sample_id)
+    this.databaseService.getTarSize(selected_ids).subscribe({
+      next: (data) => {
+        this.downloadSize = (data.sum/(1024**3)).toFixed(2) + ' GB'
+      },
+      error: (e) => {
+        console.error(e);
+      }
+    });
   }  
 
   containsAnyValue(string: string, values: string[]): boolean {
     return values.some(value => string.includes(value));
   }
   
-  downloadWrapper($event: any) {
-    const zip = new JSZip();
-    const downloadPromises: Promise<DownloadData>[] = [];
-    const downloadMethod = this.selected_download_method == this.download_options[0].name ? this.dowloadCleanData : this.dowloadRawData;
-    let selected_ids = []
-    for (let i = 0; i < this.selectedRowData.length; i++) {
-      const id = this.selectedRowData[i].sample_id;
-      selected_ids.push(id)
-      const downloadPromise = downloadMethod.call(this, id);
-      downloadPromises.push(downloadPromise);
+  downloadWrapper() {
+    let selected_ids = this.selectedRowData.map(row => row.sample_id)
+    if(this.selected_download_method == 'Download Standardized Data' && selected_ids.length > 0){
+      this.downloadStandaradizedData(selected_ids)
     }
-    let formatted_sample_ids = selected_ids.join(',');
-  
-    // Retrieve metadata CSV string
-    const metadataPromise = this.getDownloadedMetaData(formatted_sample_ids);
-  
-    Promise.all([metadataPromise, ...downloadPromises]).then(([metadataCsv, ...downloads]) => {
-      // Add metadata file to the zip
-      zip.file('metadata.csv', metadataCsv);
-  
-      // Add downloaded files to the zip
-      downloads.forEach(({ blob, filename }) => {
-        zip.file(filename, blob);
-      });
-  
-      // Generate zip file
-      zip.generateAsync({ type: 'blob' }).then((zipBlob: Blob) => {
-        saveAs(zipBlob, 'download.zip');
-      });
-    }).catch(error => {
-      console.error('Error downloading data:', error);
-    });
   }
 
-  dowloadCleanData(id: number): Promise<DownloadData> {
-    return new Promise((resolve, reject) => {
-      this.databaseService.getCleanData(id)
-        .subscribe({
-          next: (data) => {
-            const csvData = data.csvData; // Access the CSV data from the JSON response
-            const filename = 'Data_' + id + '.csv';
-            const blob = new Blob([csvData], { type: 'text/csv' });
-            resolve({ blob, filename });
-          },
-          error: (e) => {
-            console.error(e);
-            reject(e);
-          }
-        });
-    });
+  downloadStandaradizedData(sample_ids: number[]) {
+    this.databaseService.staticDownload(sample_ids)
   }
   
 dowloadRawData(id: number): Promise<DownloadData> {
@@ -262,7 +237,7 @@ dowloadRawData(id: number): Promise<DownloadData> {
     
     for(let i=0; i<this.display.length; i++){
       let sample = this.display[i];
-      let age = sample.age.includes('fetal')? 0 : sample.age;
+      let age = this.getAge(sample.age)
       
 
       //Get Age information to always be displayed
@@ -313,7 +288,6 @@ dowloadRawData(id: number): Promise<DownloadData> {
     this.age_dict = temp_age_dict;
     this.health_dict = temp_health_dict;
     this.cell_total = cell_count;
-    console.log(this.tissue_dict)
   }
   makeDonutChart(input_dict: any){
     let chart: Partial<DonutChartOptions> = {
@@ -492,7 +466,7 @@ dowloadRawData(id: number): Promise<DownloadData> {
   }
 
   getAgeGroup(age:number){
-    if(age < 11){
+    if(age < 10){
       return('youth')
     }
     else if(age < 20){
@@ -563,4 +537,24 @@ dowloadRawData(id: number): Promise<DownloadData> {
     let mod_selection = selection.map(value => value.toLowerCase().replace(/\s+/g, '_'));
     return(mod_selection)
   }
+
+  getAge(age:any){
+    let ret_age = -10
+    if(age.toLowerCase().includes('w') || age.toLowerCase().includes('f')){
+      ret_age = 0
+    }
+    else if(age.includes('-')){
+      let ages = age.split('-')
+      ret_age  = (Number(ages[0]) + Number(ages[1]))/2
+    }
+    else if(age.includes('+')){
+      ret_age  = Number(age.replace("+",""))
+    }
+    else {
+      ret_age = Number(age)
+    }
+    return(ret_age)
+  }
 }
+
+

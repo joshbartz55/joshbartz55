@@ -55,24 +55,59 @@
   align-items: stretch; /* Ensure items stretch vertically */
 }
 
-.left-button,
+/* .left-button,
 .right-button {
   flex-grow: 1;
-  background-color: #ccc; /* Adjust as needed */
+  background-color: #ccc;
   background-size: cover;
-  font-size: 30px; /* Set font size */
-  font-family: 'RobotoCondensed-Bold'; /* Set font family */
-  text-shadow: -1px -1px 0 white, 1px -1px 0 beige, -1px 1px 0 beige, 1px 1px 0 beige; /* Set text shadow */
+  font-size: 30px; 
+  font-family: 'RobotoCondensed-Bold';
+  text-shadow: -1px -1px 0 white, 1px -1px 0 beige, -1px 1px 0 beige, 1px 1px 0 beige;
+} */
+
+.left-button {
+  background-color: black;
+  color: white;
+  border: none;
+  font-size: 30px;
+  cursor: pointer;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  height: 100%;
+  width: 15%;
+  z-index: 1; /* Ensure the button appears above other content */
+}
+
+.right-button {
+  background-color: black;
+  color: white;
+  border: none;
+  font-size: 30px;
+  cursor: pointer;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  height: 100%;
+  width: 15%;
+  z-index: 1; /* Ensure the button appears above other content */
 }
 
 .center-content {
   width: 70%;
+  margin: 0px auto; /* Center the container horizontally */
+  text-align: center; /* Align text to the left */
 }
 
 .center-content p {
   margin-bottom: 10px; /* Adjust as needed */
 }
 
+.doc-text {
+  width: 85%;
+  margin: 20px auto; /* Adjust top, bottom, and left/right margins as needed */
+  font-size: large;
+}
 
 .center-content img {
     display: inline-block; /* Make the image inline-block */

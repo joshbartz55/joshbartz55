@@ -22,7 +22,7 @@ export type ChartOptions = {
 })
 export class HomeComponent implements OnInit {
   charts_ready = false;
-  selected_age_group = 'none';
+  selected_age_group = 'all ages';
   tissue_list = ['kidney','human bone marrow', 'pancreas', 'placenta', 'lung', 'blood', 'dermis']
   public tissue_chart_options: Partial<ChartOptions>;
   public sex_chart_options: Partial<ChartOptions>;
@@ -31,7 +31,7 @@ export class HomeComponent implements OnInit {
   sex_dict: any = {};
   age_dict: any = {'youth':0,'teen':0,'young_adult':0,'adult':0,'middle_age':0,'elderly':0,'centenarian':0,}
   logo_list: any[];
-  cell_total: number;
+  cell_total: string;
   min_age = -1
   max_age = 1000
   options = [
@@ -66,7 +66,7 @@ export class HomeComponent implements OnInit {
 
   test(age_group: any){
     if(this.selected_age_group == age_group){
-      this.selected_age_group = 'None' 
+      this.selected_age_group = 'All Ages' 
        this.min_age = -1
        this.max_age = 1000
      }
@@ -77,24 +77,24 @@ export class HomeComponent implements OnInit {
           this.max_age = 10;
           break;
         case 'teen':
-          this.min_age = 11;
-          this.max_age = 19;
+          this.min_age = 10;
+          this.max_age = 20;
           break;
         case 'young_adult':
           this.min_age = 20;
-          this.max_age = 29;
+          this.max_age = 30;
           break;
         case 'adult':
           this.min_age = 30;
-          this.max_age = 49;
+          this.max_age = 50;
           break;
         case 'middle_age':
           this.min_age = 50;
-          this.max_age = 64;
+          this.max_age = 65;
           break;
         case 'elderly':
           this.min_age = 65;
-          this.max_age = 99;
+          this.max_age = 100;
           break;
         case 'centenarian':
           this.min_age = 100;
@@ -129,8 +129,7 @@ export class HomeComponent implements OnInit {
       //Get Age information to always be displayed
       let age_group = this.getAgeGroup(age);
       temp_age_dict[age_group] = temp_age_dict[age_group] + 1;
-      
-      if(age < this.min_age || age > this.max_age){
+      if(!(age >= this.min_age && age < this.max_age)){
         continue;
       }
 
@@ -145,7 +144,11 @@ export class HomeComponent implements OnInit {
       temp_sex_dict[sex] = temp_sex_dict[sex] ? temp_sex_dict[sex] + 1 : 1;
       cell_count = cell_count + Number(sample.num_cells);
     }
-    console.log(temp_tissue_dict)
+    temp_sex_dict = Object.entries(temp_sex_dict);
+    temp_sex_dict = temp_sex_dict.map(([key, value]: [string, any]) => [key.charAt(0).toUpperCase() + key.slice(1), value]);
+    temp_sex_dict.sort((a: [string, number], b: [string, number]) => b[1] - a[1]);
+    temp_sex_dict = Object.fromEntries(temp_sex_dict);
+
     temp_tissue_dict = Object.entries(temp_tissue_dict);
     temp_tissue_dict = temp_tissue_dict.map(([key, value]: [string, any]) => [key.charAt(0).toUpperCase() + key.slice(1), value]);
     temp_tissue_dict.sort((a: [string, number], b: [string, number]) => b[1] - a[1]);
@@ -154,7 +157,7 @@ export class HomeComponent implements OnInit {
     this.tissue_dict = temp_tissue_dict;
     this.sex_dict = temp_sex_dict;
     this.age_dict = temp_age_dict;
-    this.cell_total = cell_count;
+    this.cell_total = cell_count.toLocaleString();
   }
   makeChart(input_dict: any){
     let chart: Partial<ChartOptions> = {
@@ -216,7 +219,7 @@ export class HomeComponent implements OnInit {
           enabled:true,
           color: '#E85A4F',
           shadeTo:'dark',
-          shadeIntensity: 0.55
+          shadeIntensity: 0.75
         }
       },
       stroke:{
@@ -229,7 +232,7 @@ export class HomeComponent implements OnInit {
 
   getAge(age:any){
     let ret_age = -10
-    if(age.toLowerCase().includes('w')){
+    if(age.toLowerCase().includes('w') || age.toLowerCase().includes('f')){
       ret_age = 0
     }
     else if(age.includes('-')){
@@ -246,7 +249,7 @@ export class HomeComponent implements OnInit {
   }
 
   getAgeGroup(age:number){
-    if(age < 11){
+    if(age < 10){
       return('youth')
     }
     else if(age < 20){

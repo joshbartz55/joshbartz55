@@ -2,8 +2,7 @@
 <div #igvdiv class="igv"></div>
 
 <div class="flex-container">
-   <button color="accent" class="button" (click)="getInRangeGenes()">Gene Info</button>
-
+   <button color="accent" class="button center-button" (click)="getInRangeGenes()">Get Differential Expression Data</button>
    <button color="accent" class="button" (click)="subsetCorrectCellAndTissueTypes()" *ngIf="this.genes.length > 0">Apply</button>
    <dx-tag-box
       *ngIf="this.genes.length > 0"
@@ -36,6 +35,17 @@
       [value] = 'cell_types'
       paginate = 'true'
    ></dx-tag-box>
+</div>
+<div class="legend" *ngIf="this.genes.length > 0">
+   <span>Gene LFC Legend:</span>
+   <span style="color:#9C27B0;">Significantly Downregulated</span>
+   <span style="color: #00BCD4;">Slightly Downregulated</span>
+   <span style="color: #4CAF50;">No Change</span>
+   <span style="color: #FFC300;">Slightly Upregulated</span>
+   <span style="color: #FF5733;">Significantly Upregulated</span>
+</div>
+<div class="legend" *ngIf="this.genes.length > 0">
+   <span>Black represent clusters whose linear model does not have a significant fit</span>
 </div>
 <div class="search-results" [class.searching]="loading">
    <div *ngFor="let gene_list of this.grouped_genes">
