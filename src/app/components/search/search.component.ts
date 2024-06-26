@@ -228,6 +228,7 @@ export class SearchComponent implements OnInit {
   }
   
   downloadWrapper() {
+    alert('Download Started')
     let selected_ids = this.selectedRowData.map(row => row.sample_id)
     if(this.selected_download_method == 'Download Standardized Data' && selected_ids.length > 0){
       this.downloadStandaradizedData(selected_ids)

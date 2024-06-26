@@ -46,14 +46,12 @@
 
 
 .test {
-    box-shadow: none;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
+    color: #E98074;
+    font-weight: bold;
     font-size: 16px;
+    height: 40px;
     border: solid #8E8D8A 2px;  
-    border-radius: 5px;
-    background-color: #E0DCCC
+    margin-right: 5px;
 }
 
 ::ng-deep .dx-button-text {
@@ -68,7 +66,7 @@
 .searchbutton{
     color: #E98074;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 16px;
     height: 40px;
     border: solid #8E8D8A 2px;  
     margin-left: 80px;

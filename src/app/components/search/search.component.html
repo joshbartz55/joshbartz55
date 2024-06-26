@@ -160,13 +160,14 @@
     >
         Search
     </dx-button>
-    <dx-button *ngIf="query_completed" class="test"
-        [text]="selected_download_method"
+    <dx-button *ngIf="query_completed"
+        class="test"
+        stylingMode="outlined"
+        text="Contained"
+        type="normal"
         icon="download"
-        displayExpr="name"
-        keyExpr="id"
-        (onButtonClick)="downloadWrapper()"
-    ></dx-button>
+        (onClick)="downloadWrapper()"
+    >Download Standardized Data</dx-button>
     <!-- <dx-drop-down-button *ngIf="query_completed" class="test"
         [splitButton]="true"
         [useSelectMode]="false"
