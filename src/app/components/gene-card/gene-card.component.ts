@@ -42,6 +42,8 @@ export class GeneCardComponent implements OnInit {
   no_change_color: string = '#4CAF50'
   sli_dn_color: string = '#00BCD4'
   sig_dn_color: string = '#9C27B0'
+  no_sig_fit_color: string = '#000000'
+
 
   model_selected = false;
   constructor(private geneConversionService: GeneConversionService) {}
@@ -85,7 +87,7 @@ export class GeneCardComponent implements OnInit {
           enabled: true
         }
       },
-      colors: [this.sig_dn_color, this.sli_dn_color, this.no_change_color, this.sli_up_color, this.sig_up_color],
+      colors: [this.no_sig_fit_color, this.sig_dn_color, this.sli_dn_color, this.no_change_color, this.sli_up_color, this.sig_up_color],
       plotOptions: {
         bar: {
           horizontal: true,
@@ -221,7 +223,7 @@ export class GeneCardComponent implements OnInit {
 
   createDisplayData(){
     let model_data = []
-    let meta_series_info = [0,0,0,0,0] //[significant decrease, slight decrease, no change, slight increase, significant increase]
+    let meta_series_info = [0,0,0,0,0,0] //[significant decrease, slight decrease, no change, slight increase, significant increase, non-sig fit]
     let cluster_number = this.gene_list.length;
     let min_lfc = Number.POSITIVE_INFINITY
     let max_lfc = Number.NEGATIVE_INFINITY
@@ -245,6 +247,9 @@ export class GeneCardComponent implements OnInit {
     //Setup MetaChart
     this.meta_chart_options.chart!.width =  cluster_number > 20? '100%' : Math.trunc(cluster_number * 5).toString()+'%'
     this.meta_chart_options.series = [
+      {name: "Non-Significant Fit",
+      data: [meta_series_info[5]]
+      },
       {name: "Significantly Downregulated",
       data: [meta_series_info[0]]
       },
@@ -388,7 +393,7 @@ export class GeneCardComponent implements OnInit {
   updateMetaSeriesInfo(info: number[], lfc: number, pval:number){
     let i = -1
     if(pval < 1.30103){
-      return(info)
+      i = 5
     }
     else if(lfc <= -1){
       i = 0

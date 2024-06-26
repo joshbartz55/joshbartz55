@@ -61,13 +61,13 @@ export class SearchComponent implements OnInit {
   cell_types: string[] = [];
   species: string[] = [];
   health: string[] = [];
+  pmid: string = '';
 
   selected_tissues: string[] = [];
   selected_cells: string[] = [];
   selected_species: string[] = [];
   selected_age: number[] = [];
   selected_health: string[] = []
-  pmid: string;
 
   tooltip: any;
   checkBoxesMode: string;
@@ -89,8 +89,8 @@ export class SearchComponent implements OnInit {
     this.tissue_types = databaseConstService.getTissueTypes();
     //this.species = databaseConstService.getSpecies();
     //this.cell_types = databaseConstService.getCellTypes();
-    this.health = ['All','Healthy', 'Cancer', 'Alzheimers']
-    this.cell_types = ['All Cells','T Cells', 'B Cells', 'Macrophages', 'Endothelial Cells', 'Fibroblasts', 'Dendritic Cells', 'Neurons']
+    this.health = ['All','Cancer', 'Healthy']
+    this.cell_types = ['All Cells', 'B Cells', 'Dendritic Cells', 'Endothelial Cells', 'Fibroblasts', 'Macrophages', 'Neurons', 'T Cells']
 
     this.selected_tissues = this.tissue_types;
     this.selected_cells = ['All Cells'];
@@ -126,20 +126,23 @@ export class SearchComponent implements OnInit {
   }
 
   samplesTest() {
+    let backend_tissue_select = [];
     if(this.selected_species.length == 0){
       this.selected_species = this.species
     }
     if(this.selected_tissues.length == 0){
       this.selected_tissues = this.tissue_types
     }
+    backend_tissue_select = this.addBackendTissue(this.selected_tissues)
+
     if(this.selected_cells.length == 0){
       this.selected_cells = this.cell_types
     }
     if(this.selected_health.length == 0){
       this.selected_health = ["Healthy"];
     }
-    
-    this.databaseService.getSamplesTest(this.selected_species,this.selected_tissues, this.formatForDB(this.selected_cells),this.selected_age, this.formatForDB(this.selected_health), this.pmid)
+    let pmid_selected = this.pmid == ''? 'undefined':this.pmid
+    this.databaseService.getSamplesTest(this.selected_species,backend_tissue_select, this.formatForDB(this.selected_cells),this.selected_age, this.formatForDB(this.selected_health), pmid_selected)
       .subscribe({
         next: (data) => {
           this.display = data;
@@ -172,6 +175,38 @@ export class SearchComponent implements OnInit {
   }
   switchSelectedDownloadMethod($event: any){
     this.selected_download_method=$event.itemData.name
+  }
+
+  addBackendTissue(tissue_list: any[]){
+    let backend_tissue_select = [...tissue_list]
+    if(backend_tissue_select.includes('Intestine')){
+      backend_tissue_select.push('SmallInt')
+      backend_tissue_select.push('Large')
+    }
+    if(backend_tissue_select.includes('Rectum')){
+      backend_tissue_select.push('REC')
+    }
+
+    if(backend_tissue_select.includes('Appendix')){
+      backend_tissue_select.push('APD')
+    }
+
+    if(backend_tissue_select.includes('Dermis')){
+      backend_tissue_select.push('skin')
+    }
+
+    if(backend_tissue_select.includes('Blood')){
+      backend_tissue_select.push('PBMC')
+    }
+
+    if(backend_tissue_select.includes('Bone Marrow')){
+      backend_tissue_select.push('marrow')
+    }
+
+    if(backend_tissue_select.includes('Common Bile Duct')){
+      backend_tissue_select.push('Common bule duct')
+    }
+    return(backend_tissue_select)
   }
 
   onSelectionChanged(event: any) {
@@ -556,5 +591,3 @@ dowloadRawData(id: number): Promise<DownloadData> {
     return(ret_age)
   }
 }
-
-

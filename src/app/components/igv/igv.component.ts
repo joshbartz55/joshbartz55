@@ -31,7 +31,8 @@ export class IgvComponent implements AfterViewInit, OnDestroy {
    browser: any;
    trackUrl = 'https://www.encodeproject.org/files/ENCFF356YES/@@download/ENCFF356YES.bigWig'
    options = {
-      genome: "hg38"
+      genome: "hg38",
+      locus: 'chr10:1000000-2000000'
    };
 
    //Chart Variables
@@ -173,10 +174,16 @@ export class IgvComponent implements AfterViewInit, OnDestroy {
         // this.original_genes = this.prettyOrderer(this.original_genes)
         // this.genes = this.prettyOrderer(this.genes)
        },
-       error: (e) => console.error(e),
-       complete: () => this.loading = false 
+       error: (e) => {
+        console.error(e)
+        this.loading = false;
+        alert('Too Many Genes Selected, Please Narrow Search Region')
+       },
+       complete: () => {
+        this.loading = false
+        this.found = true
+       }
      });
-    this.found = true
  }
    ngOnDestroy() {
       igv.removeAllBrowsers()

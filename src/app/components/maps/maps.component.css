@@ -78,6 +78,9 @@
   color: forestgreen;
 }
 
-.image {
-  
+.memo {
+  font-size: medium;
+  font-Family: 'RobotoCondensed';
+  text-align: center;
+  display: inline-block;
 }

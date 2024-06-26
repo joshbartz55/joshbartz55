@@ -130,16 +130,16 @@ export class MapsComponent implements OnInit {
       xaxis:{
         tickAmount: 10,
         title: {
-          text: 'Age (Years)',
+          text: 'Age (Year)',
           offsetY: 80
         }
       },
       yaxis: {
-        // labels: {
-        //   formatter: function(value) {
-        //     return (value.toFixed(1)).toString(); // Round the tick value to the nearest whole number
-        //   }
-        // },
+        labels: {
+          formatter: function(value) {
+            return (value.toFixed(0)).toString(); // Round the tick value to the nearest whole number
+          }
+        },
         title: {
           text: 'Normalized Expression',
           offsetX: 0
