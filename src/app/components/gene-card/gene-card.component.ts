@@ -61,8 +61,6 @@ export class GeneCardComponent implements OnInit {
       if(this.en_id.length<15){
         this.en_id += ' '.repeat(15-this.en_id.length)
       }
-      console.log(this.en_id)
-      console.log(this.en_id.length)
     }).catch((error: any) => {
       console.error('Error converting ensemble ID to gene:', error);
     });

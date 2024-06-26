@@ -59,7 +59,7 @@ export class IgvComponent implements AfterViewInit, OnDestroy {
 
 
    constructor(private databaseService: DatabaseService, databaseConstService: DatabaseConstsService) {
-      this.cell_types = databaseConstService.getCellTypes();
+      this.cell_types = databaseConstService.getDECellTypes();
       this.selected_cells = this.cell_types;
       this.pmid_tissue_dist = databaseConstService.getDePmidTissueDict();
       this.tissue_types = Object.keys(this.pmid_tissue_dist)
@@ -208,26 +208,30 @@ export class IgvComponent implements AfterViewInit, OnDestroy {
     return(Object.values(groupedLists));
    }
 
-   subsetCorrectCellAndTissueTypes(){
+   subsetCorrectCellAndTissueTypes() {
     this.grouped_genes = JSON.parse(JSON.stringify(this.original_grouped_genes));
+
     let selected_pmids: number[] = [];
     for (const key in this.pmid_tissue_dist) {
-      if (this.selected_tissues.includes(key)) {
-        selected_pmids.push(...this.pmid_tissue_dist[key]);
-      }
-    }
-    console.log(selected_pmids)
-    
-    for(let i = 0; i < this.grouped_genes.length; i++){
-      let geneset = this.grouped_genes[i]
-      for(let j = 0; j < geneset.length; j++){
-        let gene = geneset[j]
-        if(!this.selected_cells.includes(gene.cell_type!) || !selected_pmids.includes(gene.pmid!)){
-          this.grouped_genes[i].splice(j,1)
+        if (this.selected_tissues.includes(key)) {
+            selected_pmids.push(...this.pmid_tissue_dist[key]);
         }
-      }
     }
-   }
+    console.log(selected_pmids);
+
+    for (let i = this.grouped_genes.length - 1; i >= 0; i--) {
+        let geneset = this.grouped_genes[i];
+        for (let j = geneset.length - 1; j >= 0; j--) {
+            let gene = geneset[j];
+            let cleaned_celltype = gene.cell_type?.replace(/\s+\d+$/, '');
+            if (!this.selected_cells.includes(cleaned_celltype!) || !selected_pmids.includes(gene.pmid!)) {
+                console.log('Splicing');
+                this.grouped_genes[i].splice(j, 1);
+            }
+        }
+    }
+  }
+
 
 
   //  assignGeneNames(gene_list:DiffExp[]){

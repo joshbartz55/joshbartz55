@@ -160,7 +160,14 @@
     >
         Search
     </dx-button>
-    <dx-drop-down-button *ngIf="query_completed" class="test"
+    <dx-button *ngIf="query_completed" class="test"
+        [text]="selected_download_method"
+        icon="download"
+        displayExpr="name"
+        keyExpr="id"
+        (onButtonClick)="downloadWrapper()"
+    ></dx-button>
+    <!-- <dx-drop-down-button *ngIf="query_completed" class="test"
         [splitButton]="true"
         [useSelectMode]="false"
         [text]="selected_download_method"
@@ -170,7 +177,7 @@
         keyExpr="id"
         (onItemClick)="switchSelectedDownloadMethod($event)"
         (onButtonClick)="downloadWrapper()"
-    ></dx-drop-down-button>
+    ></dx-drop-down-button> -->
     <b class = "downloadInfo" *ngIf="selectedRowKeys.length == 1">{{selectedRowKeys.length}} Sample Totaling</b>
     <b class = "downloadInfo" *ngIf="selectedRowKeys.length > 1">{{selectedRowKeys.length}} Samples Totaling</b>
     <b class = "downloadInfo" *ngIf="selectedRowKeys.length > 0">{{downloadSize}} Selected</b>

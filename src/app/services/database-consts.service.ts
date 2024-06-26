@@ -69,19 +69,24 @@ export class DatabaseConstsService {
     "Pyramidal cell" ,"Radial glial cell" ,"Serotonergic neuron" ,"Side-population cell" ,"Specialist antigen presenting cell" ,"T helper9 (Th9) cell" ,"Thymocyte" ,"Trophoblast stem cell" ,"Tumor-propagating cell" ,
     "Type I pneumocyte" ,"Urine-derived stem cell" ,"Vaginal cell" ,"Atypical memory B cell"
   ]
+
+  DiffExpCellTypes = [
+    "Acinar cell","Airway secretory cell","Alpha cell","Alveolar epithelial progenitor cell","Astrocyte","B cell","Basal cell","Beta cell","Blast cell","Brush cell (Tuft cell)","Cancer stem cell","Cancer stem-like cell","CD4+ cytotoxic T cell","CD4+ T cell","CD8+ T cell","Ciliated cell","Cytotoxic T cell","Delta cell","Dendritic cell","Dendritic cell progenitor","Endocrine cell","Endothelial cell","Epithelial cell","Epithelial progenitor cell","Excitatory Neurons","Fibroblast","FOXN4+ cell","Glial cell","Hematopoietic cell","Hematopoietic progenitor cell","Hematopoietic stem cell","Hepatocyte","Idiopathic pulmonary fibrosis cell","Inhibitory Neurons","Intestinal stem cell","Ionocyte cell","Ito cell (hepatic stellate cell)","Kupffer cell","Liver bud hepatic cell","Liver progenitor cell","Lung epithelial cell","Lymphocyte","Lymphoid-primed multipotent progenitor","M1 macrophage","M2 macrophage","Macrophage","Mast cell","Mast cell progenitor","Memory B cell","Mesenchymal cell","Mesenchymal stem cell","Mesenchymal stromal cell","Microglial cell","Monocyte","Monocyte derived dendritic cell","Mucosal-associated invariant T cell","Myeloid cell","Myeloid conventional dendritic cell","Myeloid dendritic cell","Myeloid-derived suppressor cell","NA","Naive T cell","Natural killer cell","Natural killer T (NKT) cell","Nephron epithelial cell","Neural stem cell","Neuroendocrine cell","Neuron","Neutrophil","Non-classical monocyte","Oligodendrocyte","Oligodendrocyte precursor cell","Pancreatic polypeptide cell","Plasma cell","Plasmacytoid dendritic cell","Platelet","PP cell","Regulatory T (Treg) cell","Secretory cell","SLC16A7+ cell","T cell","T helper cell","T1 (Transitional) B cell","Type II pneumocyte","Unkown","Urothelium cell"        ]
+
   species: string[] =[
     "Human", "Mouse"
   ]
 
   DiffExpPMIDTissueDict: { [key: string]: number[] } = {
-    "Kidney": [31896769],
-    "Liver": [30348985, 35021063],
-    "Bone Narrow": [30518681],
-    "Lung": [30554520, 36108172],
-    "Pancreas": [30865899, 34450029],
+    "Bone Marrow": [30518681],
     "Brain": [31316211, 31178122],
     "Colon": [32888429, 34428183],
-};
+    "Kidney": [31896769],
+    "Liver": [30348985, 35021063],
+    "Lung": [30554520, 36108172],
+    "Pancreas": [30865899, 34450029]
+  };
+
 
   getTissueTypes(){
     return this.tissueTypes
@@ -94,6 +99,9 @@ export class DatabaseConstsService {
   }
   getDePmidTissueDict(){
     return this.DiffExpPMIDTissueDict
+  }
+  getDECellTypes(){
+    return this.DiffExpCellTypes
   }
   constructor() { }
 }

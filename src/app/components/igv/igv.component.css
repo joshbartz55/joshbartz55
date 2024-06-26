@@ -5,13 +5,11 @@
 
 .flex-container {
     display: flex;
-    margin-top: 10px;
     margin-bottom: 4px;
 }
 
 .flex-child {
     flex: 1;
-    border: 2px solid red;
 } 
 
 .legend {
@@ -37,14 +35,30 @@
     border-radius: 3px;
     box-shadow: 0 3px #999;
     margin: 2px;
+    width: 10%;
 }
 
 .center-button {
-    text-align: center; /* Aligns the button's text in the center */
-    width: 25%; /* Adjust the width as needed */
-    margin: 2px auto; /* Center the button horizontally */
+    text-align: center;
+    width: 25%;
+    margin: 2px auto;
+    min-height: 35px;
+    background-color: #D8C385;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    border-radius: 3px;
+    box-shadow: 0 3px #999;
   }
 
+.get-button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
 .button:active {
     background-color: #CEB464;
     transform: translateY(4px);
@@ -75,4 +89,12 @@
   z-index: 999;
   padding-top: 20px;
   font-size: 50px;
+}
+
+.selectbox-title{
+  color: #E98074;
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
+  margin: 5px;
 }
