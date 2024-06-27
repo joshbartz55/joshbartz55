@@ -127,6 +127,8 @@ export class SearchComponent implements OnInit {
 
   samplesTest() {
     let backend_tissue_select = [];
+    let backend_health_select = [];
+
     if(this.selected_species.length == 0){
       this.selected_species = this.species
     }
@@ -141,8 +143,11 @@ export class SearchComponent implements OnInit {
     if(this.selected_health.length == 0){
       this.selected_health = ["Healthy"];
     }
+    backend_health_select = this.addBackendHealth(this.selected_health)
+
     let pmid_selected = this.pmid == ''? 'undefined':this.pmid
-    this.databaseService.getSamplesTest(this.selected_species,backend_tissue_select, this.formatForDB(this.selected_cells),this.selected_age, this.formatForDB(this.selected_health), pmid_selected)
+
+    this.databaseService.getSamplesTest(this.selected_species,backend_tissue_select, this.formatForDB(this.selected_cells),this.selected_age, backend_health_select, pmid_selected)
       .subscribe({
         next: (data) => {
           this.display = data;
@@ -207,6 +212,19 @@ export class SearchComponent implements OnInit {
       backend_tissue_select.push('Common bule duct')
     }
     return(backend_tissue_select)
+  }
+
+
+  addBackendHealth(health_list: any[]){
+    let backend_health_select = [...health_list]
+    if(backend_health_select.includes('Healthy')){
+      backend_health_select.push('normal')
+    }
+    if(backend_health_select.includes('Cancer')){
+      backend_health_select.push('carcinoma')
+    }
+
+    return(backend_health_select)
   }
 
   onSelectionChanged(event: any) {
