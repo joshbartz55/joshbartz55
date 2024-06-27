@@ -29,7 +29,7 @@ export class HomeComponent implements OnInit {
   sample_info: any[];
   tissue_dict: any = {};
   sex_dict: any = {};
-  age_dict: any = {'youth':0,'teen':0,'young_adult':0,'adult':0,'middle_age':0,'elderly':0,'centenarian':0,}
+  age_dict: any = {'0-9':0,'10-19':0,'20-29':0,'30-49':0,'50-64':0,'65-99':0,'100+':0,}
   logo_list: any[];
   cell_total: string;
   min_age = -1
@@ -72,31 +72,31 @@ export class HomeComponent implements OnInit {
      }
      else{
       switch (age_group){
-        case 'youth':
+        case '0-9':
           this.min_age = -1;
           this.max_age = 10;
           break;
-        case 'teen':
+        case '10-19':
           this.min_age = 10;
           this.max_age = 20;
           break;
-        case 'young_adult':
+        case '20-29':
           this.min_age = 20;
           this.max_age = 30;
           break;
-        case 'adult':
+        case '30-49':
           this.min_age = 30;
           this.max_age = 50;
           break;
-        case 'middle_age':
+        case '50-64':
           this.min_age = 50;
           this.max_age = 65;
           break;
-        case 'elderly':
+        case '65-99':
           this.min_age = 65;
           this.max_age = 100;
           break;
-        case 'centenarian':
+        case '100+':
           this.min_age = 100;
           this.max_age = 1000;
           break;
@@ -116,7 +116,7 @@ export class HomeComponent implements OnInit {
   makeDictionaries(){
     let temp_tissue_dict: any = {};
     let temp_sex_dict: any = {};
-    let temp_age_dict: any = {'youth':0,'teen':0,'young_adult':0,'adult':0,'middle_age':0,'elderly':0,'centenarian':0,}
+    let temp_age_dict: any = {'0-9':0,'10-19':0,'20-29':0,'30-49':0,'50-64':0,'65-99':0,'100+':0,}
     let cell_count = 0;
     
     for(let i=0; i<this.sample_info.length; i++){
@@ -250,24 +250,24 @@ export class HomeComponent implements OnInit {
 
   getAgeGroup(age:number){
     if(age < 10){
-      return('youth')
+      return('0-9')
     }
     else if(age < 20){
-      return('teen')
+      return('10-19')
     }
     else if(age < 30){
-      return('young_adult')
+      return('20-29')
     }
     else if(age < 50){
-      return('adult')
+      return('30-49')
     }
     else if(age < 65){
-      return('middle_age')
+      return('50-64')
     }
     else if(age < 100){
-      return('elderly')
+      return('65-99')
     }
-    return('centenarian')
+    return('100+')
   }
   prettify(input_name:string){
     input_name = input_name.replace("_", " ")

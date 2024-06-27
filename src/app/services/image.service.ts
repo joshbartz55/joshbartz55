@@ -19,11 +19,11 @@ export class ImageService {
 }    
 const images_delatils = [    
     { "id": 1, "name": 'logo', "url": "assets/images/test_logo.png" },    
-    { "id": 2, "name": 'youth', "url": "assets/images/Youth.png" },    
-    { "id": 3, "name": 'teen', "url": "assets/images/Teen.png" },    
-    { "id": 4, "name": 'young_adult', "url": "assets/images/YA.png" },    
-    { "id": 5, "name": 'adult', "url": "assets/images/Adult.png" },    
-    { "id": 6, "name": 'middle_age', "url": "assets/images/MA.png" },    
-    { "id": 7, "name": 'elderly', "url": "assets/images/Elderly.png" },    
-    { "id": 8, "name": 'centenarian', "url": "assets/images/Cent.png" },    
+    { "id": 2, "name": '0-9', "url": "assets/images/0-9.png" },    
+    { "id": 3, "name": '10-19', "url": "assets/images/10-19.png" },    
+    { "id": 4, "name": '20-29', "url": "assets/images/20-29.png" },    
+    { "id": 5, "name": '30-49', "url": "assets/images/30-49.png" },    
+    { "id": 6, "name": '50-64', "url": "assets/images/50-64.png" },    
+    { "id": 7, "name": '65-99', "url": "assets/images/65-99.png" },    
+    { "id": 8, "name": '100+', "url": "assets/images/100+.png" },    
 ]    

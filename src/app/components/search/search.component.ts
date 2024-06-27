@@ -51,7 +51,7 @@ export class SearchComponent implements OnInit {
 
   tissue_dict: any = {};
   sex_dict: any = {};
-  age_dict: any = {'youth':0,'teen':0,'young_adult':0,'adult':0,'middle_age':0,'elderly':0,'centenarian':0,}
+  age_dict: any = {'0-9':0,'10-19':0,'20-29':0,'30-49':0,'50-64':0,'65-99':0,'100+':0,}
   health_dict: any = {'Healthy':0, 'Cancer':0, 'Other':0, 'Unkown': 0}
   cell_total: number;
   min_age = -1
@@ -285,7 +285,7 @@ dowloadRawData(id: number): Promise<DownloadData> {
   makeDictionaries(){
     let temp_tissue_dict: any = {};
     let temp_sex_dict: any = {};
-    let temp_age_dict: any = {'youth':0,'teen':0,'young_adult':0,'adult':0,'middle_age':0,'elderly':0,'centenarian':0}
+    let temp_age_dict: any = {'0-9':0,'10-19':0,'20-29':0,'30-49':0,'50-64':0,'65-99':0,'100+':0,}
     let temp_health_dict: any = {'Healthy':0, 'Cancer':0, 'Other':0, 'Unkown': 0}
     let cell_count = 0;
     
@@ -344,6 +344,7 @@ dowloadRawData(id: number): Promise<DownloadData> {
     this.cell_total = cell_count;
   }
   makeDonutChart(input_dict: any){
+    console.log(input_dict)
     let chart: Partial<DonutChartOptions> = {
       series: Object.values(input_dict),
       chart: {
@@ -521,24 +522,24 @@ dowloadRawData(id: number): Promise<DownloadData> {
 
   getAgeGroup(age:number){
     if(age < 10){
-      return('youth')
+      return('0-9')
     }
     else if(age < 20){
-      return('teen')
+      return('10-19')
     }
     else if(age < 30){
-      return('young_adult')
+      return('20-29')
     }
     else if(age < 50){
-      return('adult')
+      return('30-49')
     }
     else if(age < 65){
-      return('middle_age')
+      return('50-64')
     }
     else if(age < 100){
-      return('elderly')
+      return('65-99')
     }
-    return('centenarian')
+    return('100+')
   }
 
   formatRow($event: any){
