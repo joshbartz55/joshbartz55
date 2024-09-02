@@ -28,7 +28,7 @@ export class DocumentationComponent implements OnInit {
     this.selectedFeature = 'Genome Browser'
     this.leftButtonImage = '../../../assets/images/Documentation/HomePageMain.png'; 
     this.rightButtonImage = '../../../assets/images/Documentation/SearchPageMain.png';
-    this.rightButtonName = 'Search Page'
+    this.rightButtonName = 'GO Term Explorer'
     this.leftButtonName = 'Home Page'
   }
   selectedSeachPage(): void {
@@ -36,6 +36,13 @@ export class DocumentationComponent implements OnInit {
     this.leftButtonImage = '../../../assets/images/Documentation/GenomeBrowserMain.png'; 
     this.rightButtonImage = '../../../assets/images/Documentation/HomePageMain.png';
     this.rightButtonName = 'Home Page'
+    this.leftButtonName = 'GO Term Explorer'
+  }
+  selectedGOPage(): void {
+    this.selectedFeature = 'GOTermPage'
+    this.leftButtonImage = '../../../assets/images/Documentation/GenomeBrowserMain.png'; 
+    this.rightButtonImage = '../../../assets/images/Documentation/HomePageMain.png';
+    this.rightButtonName = 'Search Page'
     this.leftButtonName = 'Genome Browser'
   }
 
@@ -49,6 +56,9 @@ export class DocumentationComponent implements OnInit {
         break
       case "Search Page":
         this.selectedSeachPage()
+        break
+      case "GO Term Explorer":
+        this.selectedGOPage()
     }
   }
 
@@ -62,6 +72,9 @@ export class DocumentationComponent implements OnInit {
         break
       case "Search Page":
         this.selectedSeachPage()
+        break
+      case "GO Term Explorer":
+        this.selectedGOPage()
     }
   }
 }

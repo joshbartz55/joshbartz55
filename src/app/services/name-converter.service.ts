@@ -44,4 +44,33 @@ export class GeneConversionService {
       });
     });
   }
+
+  async convertEnsemblListToGeneList(ensembleIds: string[]): Promise<string[]> {
+    return new Promise<string[]>((resolve, reject) => {
+      this.mappingsLoaded$.pipe(
+        filter(loaded => loaded), // Wait until mappings are loaded
+        take(1) // Take the first value and complete the observable
+      ).subscribe(() => {
+        const geneNames: string[] = [];
+        const promises = ensembleIds.map(ensembleId => {
+          return new Promise<string>((resolve, reject) => {
+            if (ensembleId in this.ensembleToGeneMapping) {
+              resolve(this.ensembleToGeneMapping[ensembleId]);
+            } else {
+              reject(`Gene not found for Ensembl ID: ${ensembleId}`);
+            }
+          });
+        });
+  
+        Promise.all(promises)
+          .then(results => {
+            resolve(results);
+          })
+          .catch(error => {
+            reject(error);
+          });
+      });
+    });
+  }
+  
 }

@@ -6,7 +6,7 @@ import {ChartComponent,ApexAxisChartSeries,ApexChart,ApexPlotOptions,ApexXAxis, 
 import { DiffExp } from 'src/app/models/diffExp.model';
 import { Indices } from 'src/app/models/indices.model';
 import { DatabaseConstsService } from 'src/app/services/database-consts.service';
-import { ListMenuMode } from 'devextreme/ui/list';
+import { LociService } from 'src/app/services/loci.service';
 
 export type ChartOptions = {
    series: ApexAxisChartSeries;
@@ -58,7 +58,7 @@ export class IgvComponent implements AfterViewInit, OnDestroy {
    loading: boolean = false;
 
 
-   constructor(private databaseService: DatabaseService, databaseConstService: DatabaseConstsService) {
+   constructor(private databaseService: DatabaseService, databaseConstService: DatabaseConstsService, private lociService: LociService) {
       this.cell_types = databaseConstService.getDECellTypes();
       this.selected_cells = this.cell_types;
       this.pmid_tissue_dist = databaseConstService.getDePmidTissueDict();
@@ -122,11 +122,23 @@ export class IgvComponent implements AfterViewInit, OnDestroy {
     }
 
    ngAfterViewInit() {
-      this.createBrowser()
-   }
+    let loci = this.lociService.getLocus()
+
+    if(loci != null){
+      this.options = {
+        genome: "hg38",
+        locus: loci
+     };
+     this.lociService.setLocus(null)
+    }
+    this.createBrowser();
+    console.log(this.lociService.getLocus())
+  }
+  
    async createBrowser() {
       try {
          this.browser = await  igv.createBrowser(this.igvDiv.nativeElement, this.options)
+         //this.addTrackByUrl()
       } catch(e) {
          console.log(e)
       }
@@ -167,6 +179,7 @@ export class IgvComponent implements AfterViewInit, OnDestroy {
          this.original_genes = data;
          this.genes = data;
          this.original_grouped_genes = this.convertDiffExpData(this.original_genes)
+         console.log(this.original_grouped_genes)
          this.subsetCorrectCellAndTissueTypes()
          console.log(this.grouped_genes)
         //this.original_genes = this.assignGeneNames(this.original_genes)
@@ -203,7 +216,7 @@ export class IgvComponent implements AfterViewInit, OnDestroy {
         acc[obj.gene].push(obj);
         return acc;
     }, {} as { [gene: string]: DiffExp[] });
-    
+
     // Convert the object to an array of arrays
     return(Object.values(groupedLists));
    }
@@ -224,6 +237,9 @@ export class IgvComponent implements AfterViewInit, OnDestroy {
         for (let j = geneset.length - 1; j >= 0; j--) {
             let gene = geneset[j];
             let cleaned_celltype = gene.cell_type?.replace(/\s+\d+$/, '');
+            if(gene.cell_type?.includes('All')){
+              continue;
+            }
             if (!this.selected_cells.includes(cleaned_celltype!) || !selected_pmids.includes(gene.pmid!)) {
                 console.log('Splicing');
                 this.grouped_genes[i].splice(j, 1);

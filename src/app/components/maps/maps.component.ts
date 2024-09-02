@@ -42,7 +42,7 @@ export class MapsComponent implements OnInit {
   public linReg_chart_options: Partial<ChartOptions>;
 
 
-  maps = [{text: "UMAP"}, {text: "TSNE"}, {text: "Linear Regression"}, {text: "Meta Info"}];
+  maps = [{text: "UMAP"}, {text: "TSNE"}, {text: "Model Visualization"}, {text: "Meta Info"}];
   display = 'UMAP';
 
   constructor(private databaseService: DatabaseService, private sanitizer: DomSanitizer) {}
@@ -109,7 +109,7 @@ export class MapsComponent implements OnInit {
         type: 'scatter',
         data: this.points_data
       },{
-        name: 'Linear Regression',
+        name: 'Linear Visualization',
         type: 'line',
         data: this.line_data
       }],
@@ -193,7 +193,8 @@ export class MapsComponent implements OnInit {
   }
 
   calculateDecadeChange(){
-    this.decade_change = Number((this.selected_info.lfc/65 * 1000).toFixed(2))
+    console.log(this.selected_info.lfc)
+    this.decade_change = Number((this.selected_info.lfc *1000).toFixed(4))
   }
 
 }

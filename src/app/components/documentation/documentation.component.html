@@ -8,9 +8,13 @@
       <span class="button-text">Genome Browser</span>
     </button>
     <button class="image-button">
-      <img src="../../../assets/images/Documentation/SP_1.png" alt="Image 3" (click)="selectedSeachPage()"style="outline: 2px solid black;">
-      <span class="button-text">Search and Download</span>
+      <img src="../../../assets/images/Documentation/GoTermMain.png" alt="Image 3" (click)="selectedGOPage()"style="outline: 2px solid black;">
+      <span class="button-text">Go Term Explorer</span>
     </button>
+    <button class="image-button">
+        <img src="../../../assets/images/Documentation/SP_1.png" alt="Image 3" (click)="selectedSeachPage()"style="outline: 2px solid black;">
+        <span class="button-text">Search and Download</span>
+      </button>
 </div>
 
 <div *ngIf="selectedFeature != 'None'" class="main-documentation">
@@ -21,7 +25,7 @@
             <p class = "doc-text">
                 Welcome to the <strong>S</strong>ingle <strong>C</strong>ell <strong>A</strong>ging <strong>Li</strong>brary <strong>W</strong>ith <strong>A </strong> <strong>G</strong>enome Browser (<strong>SCALIWAG</strong>) Our homepage serves as a gateway to SCALIWAG and offers an overview of the vast array of data stored within. Here, you can explore the sex and tissue distribution of donors within our database through the graphs at the top of the screen. You can also explore these distributions as a function of age by clicking on any of the age groups in the cornucopia of aging at the bottom of the screen.
             </p>
-            <img src="../../../assets/images/Documentation/HomePageMain.png" alt="HomePageImage">
+            <img src="../../../assets/images/Documentation/H_1.png" alt="HomePageImage">
         </div>
         <div class="center-content" *ngIf="selectedFeature == 'Genome Browser'">
             <h1>GENOME BROWSER DOCUMENTATION</h1>
@@ -36,11 +40,11 @@
             <p class = "doc-text">
                 Genes will be displayed below the IGV interface along with summary statistics and the prevalance of that gene within the selcted portion of our database. Central to each gene panel, the summary bar offers a concise snapshot of the gene's age-dependent changes, providing you with swift insights into its dynamic behavior over time. Different patterns of gene expression are represented by colored bars:
             </p>
-            <p class = "doc-text">Purple: Signifcantly Upregulation</p>
-            <p class = "doc-text">Red: Moderate Upregulation</p>
-            <p class = "doc-text">Yellow: No Change </p>
-            <p class = "doc-text">XX: Moderate Downregulation</p>
-            <p class = "doc-text">XX: Signifcantly Downregulation</p>
+            <p class = "doc-text">Purple: Signifcantly Downregulated</p>
+            <p class = "doc-text">Blue: Moderate Downregulated</p>
+            <p class = "doc-text">Green: No Change </p>
+            <p class = "doc-text">Yellow: Moderate Upregulated</p>
+            <p class = "doc-text">Red: Signifcantly Upregulated</p>
             <p class = "doc-text">
                Hover over each bar to see the number of detections that fall into each classification. To see more infomation about a certain gene, click on its panel!
             </p>
@@ -53,6 +57,20 @@
                Once a specific cluster has been slected a new section will apear on the right of the gene pannel. This section is broken up into four parts that can be navigated through using the buttons on the top of the new section. Below these buttons is the name of the cluster that has been selected. The UMAP and TSNE sections displays the UMAP and TSNE (when avaliable) of the overall study, the selected cluster can be found within these reductions. The Linear Regression tab displays the linear regression used to calcualte the log fold change of the selcted gene within the selected cluster. Each blue dot represents a cell with the age of that cell on the x-axis and the expression of that cell on the y-axis. Finally the Meta Info tab references the study this data has been taken from as well as other possible cell types for this cluster.
             </p>
             <img src="../../../assets/images/Documentation/GB_5.png" alt="HomePageImage">
+        </div>
+            <div class="center-content" *ngIf="selectedFeature == 'GOTermPage'">
+            <h1>GO TERM EXPLORER DOCUMENTATION</h1>
+            <p class = "doc-text">
+                Welcome to the Go Term Explorer Page. Explore GO Terms enriched in healthy human aging. 
+            </p>
+            <img src="../../../assets/images/Documentation/GT_1.png" alt="HomePageImage">
+            <p class = "doc-text">
+               Enrichment for the selected GO Term in upregulated (red) and downregulated (blue) genes is displayed at the top of your screen. Undernreath is a Gini Index Graph that displays a histrogram of Gini Index values of over 5000 analyzed pathways. GO terms with low Gini indices are enriched nearly equally across groups, while those with high Gini indices are enriched in only a few. The red and blue vertical lines represent the Gini Index for the selected GO Term when enriched by upregulated (red) and downregulated (blue) genes. At the bottom of the page select boxes let you select specific tissues and cell types to include in your search. Pathways can be searched using an autocomplete bar at the borrom of th page. The autocomplete functionality can be toggled to search for pathways containing or starting with a keyword. On the right hand side of the page genes associated with the selected go term are ordered based on their pervalance in upregulated or downregulated clusters. For example CD115 is psoitively enriched in 32.1% of upregulated clusters. Further information about specific clusters can be found by clicking on a cluster.
+            </p>
+            <img src="../../../assets/images/Documentation/GT_2.png" alt="HomePageImage">
+            <p class = "doc-text">
+                Cluster Information is then displayed on the top left hand side of the page. Below that genes specifically enriched in that cluster are listed. Clicking on a gene will send you to that genes location in our Genome Browser Page.
+             </p>
         </div>
         <div class="center-content" *ngIf="selectedFeature == 'Search Page'">
             <h1>SEARCH AND DOWNLOAD PAGE DOCUMENTATION</h1>

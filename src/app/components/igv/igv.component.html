@@ -1,4 +1,6 @@
-
+<div *ngIf="loading" class="loading-overlay" id="loadingOverlay">
+   <div class="loading-message">Loading...</div>
+ </div>
 <div #igvdiv class="igv"></div>
 
 <div class="get-button-container">
@@ -56,5 +58,4 @@
    <div *ngFor="let gene_list of this.grouped_genes">
       <app-gene-card [gene_list]="gene_list" [indices]="selected_indices"></app-gene-card>
    </div>
-   <div *ngIf="loading" class="loading-overlay">Loading...</div>
 </div>

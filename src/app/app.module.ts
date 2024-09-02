@@ -5,7 +5,7 @@ import { AppRoutingModule, routingComponents } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SearchComponent } from './components/search/search.component';
 import { HomeComponent } from './components/home/home.component';
-import { DxButtonModule, DxDataGridModule, DxDropDownBoxModule, DxFormModule, DxRangeSliderModule, DxTagBoxModule, DxAccordionModule, DxButtonGroupModule, DxTabsModule, DxDropDownButtonModule, DxTextBoxModule, DxTabPanelModule, DxVectorMapComponent, DxVectorMapModule } from 'devextreme-angular';
+import { DxButtonModule, DxDataGridModule, DxDropDownBoxModule, DxFormModule, DxRangeSliderModule, DxTagBoxModule, DxAccordionModule, DxButtonGroupModule, DxTabsModule, DxDropDownButtonModule, DxTextBoxModule, DxTabPanelModule, DxVectorMapComponent, DxSelectBoxModule, DxVectorMapModule, DxListModule, DxAutocompleteModule } from 'devextreme-angular';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { IgvComponent } from './components/igv/igv.component';
@@ -15,6 +15,7 @@ import { MapsComponent } from './components/maps/maps.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { DocumentationComponent } from './components/documentation/documentation.component';
 import { DxiLayerModule, DxoSelectionModule } from 'devextreme-angular/ui/nested';
+import { GoComponent } from './components/go/go.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { DxiLayerModule, DxoSelectionModule } from 'devextreme-angular/ui/nested
     GeneCardComponent,
     MapsComponent,
     NavbarComponent,
-    DocumentationComponent
+    DocumentationComponent,
+    GoComponent
   ],
   imports: [
     DxFormModule,
@@ -47,6 +49,9 @@ import { DxiLayerModule, DxoSelectionModule } from 'devextreme-angular/ui/nested
     DxTextBoxModule,
     DxTabPanelModule,
     DxVectorMapModule,
+    DxListModule,
+    DxSelectBoxModule,
+    DxAutocompleteModule,
     DxiLayerModule,
     NgApexchartsModule
   ],

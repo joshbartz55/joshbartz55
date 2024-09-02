@@ -17,7 +17,7 @@
         </p>
     </div>
     
-    <div *ngIf="display=='Linear Regression'" width="85%" height="100%">
+    <div *ngIf="display=='Model Visualization'" width="85%" height="100%">
         <apx-chart
         [series]="linReg_chart_options.series!"
         [chart]="linReg_chart_options.chart!"
@@ -29,7 +29,7 @@
         [tooltip]="linReg_chart_options.tooltip!"
         [annotations]="linReg_chart_options.annotations!"
         ></apx-chart>
-        <a class = 'memo'>Linear Regression calculated using all cells in cluster, only a maximum of 500 cells displayed above</a>
+        <a class = 'memo'>Non-binomial Mixed Model (NBMM) calculated using all cells in cluster, only a maximum of 500 cells displayed above. Visualization is of linear representation of NBMM</a>
     </div>
     <div *ngIf="display=='Meta Info'">
         <div class = 'study-meta'>

@@ -31,13 +31,20 @@ export class NavbarComponent implements OnInit {
       },
       {
         id: 2,
+        text: 'GO TERM ENRICHMENT ',
+        icon: 'columnfield',
+        path: 'go',
+        color: 'red'
+      },
+      {
+        id: 3,
         text: 'SEARCH AND DOWNLOAD',
         icon: 'find',
         path: 'search',
         color: 'red'
       },
       {
-        id: 3,
+        id: 4,
         text: 'DOCUMENTATION',
         icon: 'file',
         path: 'documentation',

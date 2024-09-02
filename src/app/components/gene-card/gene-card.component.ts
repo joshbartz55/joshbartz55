@@ -43,6 +43,8 @@ export class GeneCardComponent implements OnInit {
   sli_dn_color: string = '#00BCD4'
   sig_dn_color: string = '#9C27B0'
   no_sig_fit_color: string = '#000000'
+  lfc_sig_cutoff= 0.0116
+  lfc_minor_sig_cutoff= 0.0037
 
 
   model_selected = false;
@@ -215,7 +217,6 @@ export class GeneCardComponent implements OnInit {
     if (changes['gene_list'] && !changes['gene_list'].firstChange) {
       // Update charts when gene_list input changes
       this.createDisplayData();
-      console.log(this.gene_list)
     }
   }
 
@@ -228,7 +229,7 @@ export class GeneCardComponent implements OnInit {
     let max_p_val = Number.NEGATIVE_INFINITY
     for(let i=0; i<cluster_number; i++){
       let gene = this.gene_list[i]
-      let p_value = -Math.log10(gene.p_value!)
+      let p_value = Number(gene.p_value!)
       meta_series_info = this.updateMetaSeriesInfo(meta_series_info, Number(gene.lfc), p_value)
       let fill_color = this.getFillColor(p_value, Number(gene.lfc))
       let formatted_data = {x: Number(gene.lfc), y: p_value, fillColor: fill_color}
@@ -237,10 +238,14 @@ export class GeneCardComponent implements OnInit {
       max_lfc = gene.lfc! > max_lfc ? gene.lfc! : max_lfc;
       max_p_val = p_value > max_p_val ? p_value : max_p_val;
     }
-    min_lfc = Math.floor(min_lfc - 1)
-    max_lfc = Math.ceil(max_lfc + 1)
+    let temp = Math.max(Math.abs(min_lfc), max_lfc)
+    min_lfc = -temp - 0.1
+    max_lfc = temp + 0.1
+    console.log(min_lfc)
+    console.log(max_lfc)
+
     max_p_val = Math.ceil(max_p_val+1)
-    let num_ticks = max_lfc - min_lfc
+    let num_ticks = 5
 
     //Setup MetaChart
     this.meta_chart_options.chart!.width =  cluster_number > 20? '100%' : Math.trunc(cluster_number * 5).toString()+'%'
@@ -269,7 +274,7 @@ export class GeneCardComponent implements OnInit {
     this.model_chart_options.xaxis = {
       title: {
         text: "Fixed Effect (Log2 Fold Change)",
-        offsetY: 100,
+        offsetY: 60,
         style:{
           fontSize:'24px'
         }
@@ -279,7 +284,7 @@ export class GeneCardComponent implements OnInit {
           return val.toString()
         }
       },
-      //type: "numeric",
+      type: "numeric",
       tickAmount: num_ticks,
       min: min_lfc,
       max: max_lfc
@@ -393,16 +398,16 @@ export class GeneCardComponent implements OnInit {
     if(pval < 1.30103){
       i = 5
     }
-    else if(lfc <= -1){
+    else if(lfc <= -this.lfc_sig_cutoff){
       i = 0
     }
-    else if(lfc>-1 && lfc< -0.25){
+    else if(lfc>-this.lfc_sig_cutoff && lfc< -this.lfc_minor_sig_cutoff){
       i = 1
     }
-    else if(lfc>=-0.25 && lfc<= 0.25){
+    else if(lfc>=-this.lfc_minor_sig_cutoff && lfc<= this.lfc_minor_sig_cutoff){
       i = 2
     }
-    else if(lfc>0.25 && lfc< 1){
+    else if(lfc>this.lfc_minor_sig_cutoff && lfc< this.lfc_sig_cutoff){
       i = 3
     }
     else{
@@ -433,16 +438,16 @@ export class GeneCardComponent implements OnInit {
     if(p_val < 1.30103){
       return('black')
     }
-    if(lfc < -1){
+    if(lfc < -this.lfc_sig_cutoff){
       return(this.sig_dn_color)
     }
-    if(lfc < -0.25){
+    if(lfc < -this.lfc_minor_sig_cutoff){
       return(this.sli_dn_color)
     }
-    if(lfc > 1){
+    if(lfc > this.lfc_sig_cutoff){
       return(this.sig_up_color)
     }
-    if(lfc > 0.25){
+    if(lfc > this.lfc_minor_sig_cutoff){
       return(this.sli_up_color)
     }
     return(this.no_change_color)

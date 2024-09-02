@@ -29,6 +29,9 @@ const rawDataUrl =  baseUrl.concat('sample/rawData'.toString());
 const linRegDataUrl =  baseUrl.concat('linRegData'.toString());
 const staticUrl =  baseUrl.concat('static'.toString());
 const tarSizeUrl =  baseUrl.concat('tarSize'.toString());
+const goEnrichUrl =  baseUrl.concat('goEnrich'.toString());
+const giniURL =  baseUrl.concat('gini'.toString());
+
 
 
 @Injectable({
@@ -107,6 +110,22 @@ export class DatabaseService {
     return this.http.get<any[]>(`${tarSizeUrl}/${sample_ids}`);
   }
 
+  getGoTerms(tissues:string[], cell_types:string[], pathway:string){
+    let formatted_tissues = tissues.join(',').replace(/ /g, '_');
+    let formatted_cell_types = cell_types.map(str=>str.toLowerCase().charAt(0).toUpperCase() + str.slice(1)).join(',').replace(/ /g, '_');
+    let formatted_pathway = pathway.replace(/ /g, '_');
+    console.log(`${goEnrichUrl}/${formatted_tissues}/${formatted_cell_types}/${formatted_pathway}`)
+    return this.http.get<any[]>(`${goEnrichUrl}/${formatted_tissues}/${formatted_cell_types}/${formatted_pathway}`);
+  }
+
+  getPathways(){
+    return this.http.get<any[]>(`${goEnrichUrl}/allpathways`);
+  }
+
+  getGiniScores(){
+    return this.http.get<any[]>(`${giniURL}`);
+  }
+
   staticDownload(sample_ids: number[]): void {
     const urls = sample_ids.map(id => `http://160.94.105.82:3304/static/Sample_${id}.tar.gz`);
     const fileRequests = urls.map(url => this.http.get(url, { responseType: 'blob' }).toPromise());
@@ -157,7 +176,5 @@ export class DatabaseService {
       .catch(error => {
         console.error('Error downloading files or creating zip:', error);
       });
-}
-
-  
+  }
 }
