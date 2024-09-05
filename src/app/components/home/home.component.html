@@ -5,6 +5,14 @@
   [bounds]="[-180, 85, 180, -75]"
 >
 </dx-vector-map> -->
+<div *ngIf="is_https" class="http-alert-container">
+Warning
+  <div class="http-alert-message">
+    SCALIWAG is designed to be served over <i>HTTP</i>, but it is currently being served over <i>HTTPS</i>. This may cause issues when connecting to the backend database. To properly use SCALIWAG
+    please use an incognito browser. 
+  </div>
+</div>
+
 <div class="flex-container">
   <div id="tissue_chart" *ngIf="charts_ready" class="pie-chart1">
     <apx-chart

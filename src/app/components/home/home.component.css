@@ -194,6 +194,25 @@
   font-size: large;
 }
 
+.http-alert-container {
+  font-size: 24px;
+  font-weight: bold;
+  background-color: #FFCCCC; /* Light red background */
+  border: 2px solid #FF0000; /* Red outline */
+  color: #FF0000; /* Red text color */
+  padding: 20px;
+  text-align: center; /* Center the text */
+  text-transform: uppercase; /* Capitalize the text */
+
+}
+
+.http-alert-container > .http-alert-message {
+  font-size: 18px;
+  color: #FF0000; /* Red text color */
+  text-transform: uppercase; /* Capitalize the text */
+  margin-top: 10px;
+}
+
 
 ::ng-deep .dx-tabs .dx-tab-selected{
   background-color: #8E8D8A !important;

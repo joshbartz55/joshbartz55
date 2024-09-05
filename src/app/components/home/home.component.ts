@@ -34,10 +34,11 @@ export class HomeComponent implements OnInit {
   cell_total: string;
   min_age = -1
   max_age = 1000
+  is_https: boolean = false;
   options = [
     {
       title: 'Our Mission',
-      text: 'SCALIWAG is designed to provide the gerontology community with a large repository of single cell RNA sequencing(scRNA-seq) data to further a wide range of studies on aging. Donor information, like health and age, are includedfor each of the over XXX samples in SCALIWAG.  Datasets in SCALIWAG can be sorted using a wide range of filters, including age, and can be downloaded in their original, unclean formats or in SCALIWAG\'s standard, cleaned format (for more information see Documentation).  Additionally, SALIWAG offers a genome browser tool that can be used to assertain how age effects gene expression in healthy human tissue.'
+      text: 'SCALIWAG is designed to provide the gerontology community with a large repository of single cell RNA sequencing(scRNA-seq) data to further a wide range of studies on aging. Donor information, like health and age, are includedfor each of the over 75 samples in SCALIWAG.  Datasets in SCALIWAG can be sorted using a wide range of filters, including age, and can be downloaded in their original, unclean formats or in SCALIWAG\'s standard, cleaned format (for more information see Documentation).  Additionally, SALIWAG offers a genome browser tool that can be used to assertain how age effects gene expression in healthy human tissue.'
     },
     {
       title: 'Citation',
@@ -46,6 +47,7 @@ export class HomeComponent implements OnInit {
   ]
   
   constructor(private imageService: ImageService, private databaseService: DatabaseService) {
+    this.is_https = window.location.protocol === 'https:'? true : false;
     this.databaseService.getSampleInfoForHomepage().subscribe({
       next: (data) => {
         this.sample_info = data;
@@ -57,11 +59,9 @@ export class HomeComponent implements OnInit {
       error: (e) => console.error(e)
     });
     this.logo_list = this.imageService.getLogoImages()
-
    }
 
   ngOnInit(): void {
-    
   }
 
   test(age_group: any){

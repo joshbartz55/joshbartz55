@@ -152,7 +152,6 @@ export class GoComponent implements OnInit {
         events:{
           dataPointSelection: (e, chart, opts) => {
             this.selected_term = this.go_terms[opts.dataPointIndex];
-            console.log(this.selected_term)
             this.getGeneSymbols(this.selected_term)
             this.term_selected = true;
 
