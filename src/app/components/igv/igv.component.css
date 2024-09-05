@@ -99,9 +99,14 @@
   margin: 5px;
 }
 
-/* Full-page overlay */
+.content-wrapper {
+  position: relative; /* Establishes a reference point for absolute positioning */
+  /* Optional: ensure this container takes up the full viewport height if needed */
+  min-height: 100vh;
+}
+
 .loading-overlay {
-  position: fixed;  /* Covers the entire viewport */
+  position: absolute;  /* Positioned relative to the content-wrapper */
   top: 0;
   left: 0;
   width: 100%;
@@ -110,7 +115,7 @@
   display: flex;    /* Center the loading message */
   justify-content: center;
   align-items: center;
-  z-index: 9999;    /* Ensure it covers all content */
+  z-index: 9999;    /* Ensure it covers all content within the content-wrapper */
 }
 
 /* Define pulsing animation */
