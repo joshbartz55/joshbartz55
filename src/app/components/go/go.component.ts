@@ -154,7 +154,6 @@ export class GoComponent implements OnInit {
             this.selected_term = this.go_terms[opts.dataPointIndex];
             this.getGeneSymbols(this.selected_term)
             this.term_selected = true;
-
           }
         },
         zoom: {
@@ -257,6 +256,7 @@ export class GoComponent implements OnInit {
       },
       colors: ['#708090'], // Set the fill color here
     };
+    console.log(this.term_selected)
   }
 
   createDisplayData() {
@@ -469,6 +469,7 @@ getGeneSymbols(selected_term: GoTerm): void {
       .subscribe({
         next: (data) => {
           this.go_terms = data;
+          console.log(this.go_terms)
           this.createDisplayData();
           this.getPathDisplayData();
           this.loading = false;
